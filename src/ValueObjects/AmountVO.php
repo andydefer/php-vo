@@ -27,7 +27,6 @@ final class AmountVO extends AbstractValueObject
 
     public function __construct(string $value)
     {
-        SingleParameterStrategy::class;
         $normalized = $this->normalize($value);
         $this->validate($normalized);
         $this->value = $this->formatNumber($normalized);

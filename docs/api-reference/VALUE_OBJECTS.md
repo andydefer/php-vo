@@ -2,8 +2,13 @@
 
 | Value Object | Description | Documentation |
 |--------------|-------------|---------------|
-| AmountVO | Montant monétaire avec précision à 2 décimales | [AmountVO](value-objects/AmountVO.md) |
-| EmailVO | Adresse email validée | [EmailVO](value-objects/EmailVO.md) |
-| PostalCodeVO | Code postal français à 5 chiffres | [PostalCodeVO](value-objects/PostalCodeVO.md) |
+| AmountVO | Montant monétaire avec précision à 2 décimales | [AmountVO](value-objects/amount-vo.md) |
+| EmailVO | Adresse email validée | [EmailVO](value-objects/email-vo.md) |
+| PostalCodeVO | Code postal français à 5 chiffres | [PostalCodeVO](value-objects/postal-code-vo.md) |
 | AddressVO | Adresse postale complète | [AddressVO](value-objects/address-vo.md) |
-| MoneyVO | Montant monétaire associé à une devise | [MoneyVO](value-objects/MoneyVO.md) |
+| MoneyVO | Montant monétaire associé à une devise | [MoneyVO](value-objects/money-vo.md) |
+| DateTimeVO | Date/heure ISO 8601 avec gestion des fuseaux horaires | [DateTimeVO](value-objects/date-time-vo.md) |
+| PhoneNumberVO | Numéro de téléphone international (E.164) avec indicatif | [PhoneNumberVO](value-objects/phone-number-vo.md) |
+| SlugVO | Slug URL-friendly avec normalisation automatique | [SlugVO](value-objects/slug-vo.md) |
+| IdVO | Identifiant entier positif | [IdVO](value-objects/id-vo.md) |
+---
