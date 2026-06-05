@@ -6,3 +6,4 @@
 | HttpStatusCode | Codes de statut HTTP standards (1xx à 5xx) | [HttpStatusCode.php](https://github.com/andydefer/php-vo/blob/main/src/Enums/HttpStatusCode.php) |
 | CallingCode | Indicatifs téléphoniques internationaux (ITU-T E.164) | [CallingCode.php](https://github.com/andydefer/php-vo/blob/main/src/Enums/CallingCode.php) |
 | Currency | Devises mondiales avec codes ISO 4217 et symboles | [Currency.php](https://github.com/andydefer/php-vo/blob/main/src/Enums/Currency.php) |
+| SocialiteProvider | Providers OAuth supportés par Laravel Socialite (9 officiels : Facebook, Google, GitHub, etc.) | [SocialiteProvider.php](https://github.com/andydefer/php-vo/blob/main/src/Enums/SocialiteProvider.php) |
