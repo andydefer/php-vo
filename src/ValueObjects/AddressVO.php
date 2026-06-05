@@ -9,12 +9,12 @@ use AndyDefer\DomainStructures\Traits\HasPropertiesAccess;
 use AndyDefer\PhpVo\Records\AddressRecord;
 use InvalidArgumentException;
 
-final class Address extends AbstractValueObject
+final class AddressVO extends AbstractValueObject
 {
     public function __construct(
         private readonly string $street,
         private readonly string $city,
-        private readonly PostalCode $postalCode,
+        private readonly PostalCodeVO $postalCode,
         private readonly string $country
     ) {
         $this->validate($street, $city, $postalCode, $country);
@@ -30,7 +30,7 @@ final class Address extends AbstractValueObject
         );
     }
 
-    private function validate(string $street, string $city, PostalCode $postalCode, string $country): void
+    private function validate(string $street, string $city, PostalCodeVO $postalCode, string $country): void
     {
         if (empty($street) && empty($city) && empty($postalCode) && empty($country)) {
             throw new InvalidArgumentException('Address cannot be completely empty');

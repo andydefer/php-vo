@@ -7,7 +7,7 @@ namespace AndyDefer\PhpVo\ValueObjects;
 use AndyDefer\DomainStructures\Abstracts\AbstractValueObject;
 use InvalidArgumentException;
 
-final class Amount extends AbstractValueObject
+final class AmountVO extends AbstractValueObject
 {
     private const DECIMALS = 2;
 

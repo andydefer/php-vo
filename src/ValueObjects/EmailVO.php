@@ -13,13 +13,13 @@ use InvalidArgumentException;
  * Represents a validated email address.
  * 
  * @example
- * $email = Email::from('user@example.com');
+ * $email = EmailVO::from('user@example.com');
  * echo $email->getValue(); // 'user@example.com'
  * echo $email->getDomain(); // 'example'
  * echo $email->getTld(); // 'com'
  * echo $email->getUsername(); // 'user'
  */
-final class Email extends AbstractValueObject
+final class EmailVO extends AbstractValueObject
 {
     public function __construct(protected readonly string $value) {}
 

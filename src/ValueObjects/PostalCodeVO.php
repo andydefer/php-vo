@@ -13,10 +13,10 @@ use InvalidArgumentException;
  * Represents a validated 5-digit postal code (French format).
  * 
  * @example
- * $postalCode = PostalCode::from('75001');
+ * $postalCode = PostalCodeVO::from('75001');
  * echo $postalCode->getValue(); // '75001'
  */
-final class PostalCode extends AbstractValueObject
+final class PostalCodeVO extends AbstractValueObject
 {
     public function __construct(protected readonly string $value) {}
 

@@ -6,13 +6,14 @@ namespace AndyDefer\PhpVo\Records;
 
 use AndyDefer\DomainStructures\Abstracts\AbstractRecord;
 use AndyDefer\PhpVo\ValueObjects\PostalCode;
+use AndyDefer\PhpVo\ValueObjects\PostalCodeVO;
 
 final class AddressRecord extends AbstractRecord
 {
     public function __construct(
         public readonly string $street,
         public readonly string $city,
-        public readonly PostalCode $postalCode,
+        public readonly PostalCodeVO $postalCode,
         public readonly string $country,
     ) {}
 }

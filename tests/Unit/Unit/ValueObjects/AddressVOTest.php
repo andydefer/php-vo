@@ -6,13 +6,14 @@ namespace AndyDefer\PhpVo\Tests\Unit\ValueObjects;
 
 use AndyDefer\PhpVo\Records\AddressRecord;
 use AndyDefer\PhpVo\ValueObjects\Address;
+use AndyDefer\PhpVo\ValueObjects\AddressVO;
 use PHPUnit\Framework\TestCase;
 
-final class AddressTest extends TestCase
+final class AddressVOTest extends TestCase
 {
     public function test_create_address_with_valid_data(): void
     {
-        $address = Address::from([
+        $address = AddressVO::from([
             'street' => '123 Main St',
             'city' => 'Paris',
             'postalCode' => '75001',
@@ -27,7 +28,7 @@ final class AddressTest extends TestCase
 
     public function test_create_address_from_array_with_snake_case(): void
     {
-        $address = Address::from([
+        $address = AddressVO::from([
             'street' => '456 Oak Ave',
             'city' => 'Lyon',
             'postal_code' => '69001',
@@ -43,7 +44,7 @@ final class AddressTest extends TestCase
     public function test_create_address_from_json_string(): void
     {
         $json = '{"street":"789 Pine St","city":"Marseille","postal_code":"13001","country":"France"}';
-        $address = Address::fromJson($json);
+        $address = AddressVO::fromJson($json);
 
         $this->assertSame('789 Pine St', $address->street);
         $this->assertSame('Marseille', $address->city);
@@ -53,21 +54,21 @@ final class AddressTest extends TestCase
 
     public function test_create_address_from_existing_address_returns_same_instance(): void
     {
-        $original = Address::from([
+        $original = AddressVO::from([
             'street' => '123 Main St',
             'city' => 'Paris',
             'postalCode' => '75001',
             'country' => 'France'
         ]);
 
-        $duplicate = Address::from($original);
+        $duplicate = AddressVO::from($original);
 
         $this->assertSame($original, $duplicate);
     }
 
     public function test_format_returns_formatted_address(): void
     {
-        $address = Address::from([
+        $address = AddressVO::from([
             'street' => '123 Main St',
             'city' => 'Paris',
             'postalCode' => '75001',
@@ -79,7 +80,7 @@ final class AddressTest extends TestCase
 
     public function test_format_shipping_label(): void
     {
-        $address = Address::from([
+        $address = AddressVO::from([
             'street' => '123 Main St',
             'city' => 'Paris',
             'postalCode' => '75001',
@@ -92,7 +93,7 @@ final class AddressTest extends TestCase
 
     public function test_is_in_country(): void
     {
-        $address = Address::from([
+        $address = AddressVO::from([
             'street' => '123 Main St',
             'city' => 'Paris',
             'postalCode' => '75001',
@@ -106,7 +107,7 @@ final class AddressTest extends TestCase
 
     public function test_get_postal_code_prefix(): void
     {
-        $address = Address::from([
+        $address = AddressVO::from([
             'street' => '123 Main St',
             'city' => 'Paris',
             'postalCode' => '75001',
@@ -118,7 +119,7 @@ final class AddressTest extends TestCase
 
     public function test_get_value_returns_address_record(): void
     {
-        $address = Address::from([
+        $address = AddressVO::from([
             'street' => '123 Main St',
             'city' => 'Paris',
             'postalCode' => '75001',
@@ -136,21 +137,21 @@ final class AddressTest extends TestCase
 
     public function test_equals_method(): void
     {
-        $address1 = Address::from([
+        $address1 = AddressVO::from([
             'street' => '123 Main St',
             'city' => 'Paris',
             'postalCode' => '75001',
             'country' => 'France'
         ]);
 
-        $address2 = Address::from([
+        $address2 = AddressVO::from([
             'street' => '123 Main St',
             'city' => 'Paris',
             'postalCode' => '75001',
             'country' => 'France'
         ]);
 
-        $address3 = Address::from([
+        $address3 = AddressVO::from([
             'street' => '456 Oak Ave',
             'city' => 'Lyon',
             'postalCode' => '69001',
@@ -163,7 +164,7 @@ final class AddressTest extends TestCase
 
     public function test_to_string_returns_formatted_address(): void
     {
-        $address = Address::from([
+        $address = AddressVO::from([
             'street' => '123 Main St',
             'city' => 'Paris',
             'postalCode' => '75001',

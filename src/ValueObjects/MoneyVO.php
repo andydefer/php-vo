@@ -10,12 +10,11 @@ use AndyDefer\PhpVo\Enums\Currency;
 use AndyDefer\PhpVo\Records\MoneyRecord;
 use InvalidArgumentException;
 
-final class Money extends AbstractValueObject
+final class MoneyVO extends AbstractValueObject
 {
-    use HasPropertiesAccess;
 
     public function __construct(
-        private readonly Amount $amount,
+        private readonly AmountVO $amount,
         private readonly Currency $currency
     ) {
         if ($amount->getValue() <= 0) {
