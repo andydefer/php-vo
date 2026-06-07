@@ -30,7 +30,8 @@ final class AddressVO extends AbstractValueObject
         private readonly string $street,
         private readonly string $city,
         private readonly PostalCodeVO $postalCode,
-        private readonly string $country
+        private readonly string $country,
+        private readonly ?CoordinatesVO $coordinates = null,
     ) {
         $this->validate($street, $city, $postalCode, $country);
     }
@@ -46,7 +47,8 @@ final class AddressVO extends AbstractValueObject
             street: $this->street,
             city: $this->city,
             postalCode: $this->postalCode,
-            country: $this->country
+            country: $this->country,
+            coordinates: $this->coordinates?->getValue(),
         );
     }
 
@@ -130,6 +132,26 @@ final class AddressVO extends AbstractValueObject
     public function getPostalCodePrefix(): string
     {
         return substr($this->postalCode->getValue(), 0, 2);
+    }
+
+    /**
+     * Returns the coordinates if present.
+     *
+     * @return CoordinatesVO|null The coordinates or null if not set
+     */
+    public function getCoordinates(): ?CoordinatesVO
+    {
+        return $this->coordinates;
+    }
+
+    /**
+     * Checks if the address has coordinates.
+     *
+     * @return bool True if coordinates are set
+     */
+    public function hasCoordinates(): bool
+    {
+        return $this->coordinates !== null;
     }
 
     /**

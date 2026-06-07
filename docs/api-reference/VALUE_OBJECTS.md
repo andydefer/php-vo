@@ -11,4 +11,4 @@
 | PhoneNumberVO | Numéro de téléphone international (E.164) avec indicatif | [PhoneNumberVO](value-objects/phone-number-vo.md) |
 | SlugVO | Slug URL-friendly avec normalisation automatique | [SlugVO](value-objects/slug-vo.md) |
 | IdVO | Identifiant entier positif | [IdVO](value-objects/id-vo.md) |
----
+| CoordinatesVO | Coordonnées géographiques (latitude/longitude) avec validation des plages et calcul de distance (formule de Haversine) | [CoordinatesVO](value-objects/coordinates-vo.md) |
