@@ -37,7 +37,7 @@ final class SlugVO extends AbstractValueObject
     {
         $normalized = $this->normalize($value);
 
-        if ($normalized === '' || !preg_match(self::SLUG_REGEX, $normalized)) {
+        if ($normalized === '' || ! preg_match(self::SLUG_REGEX, $normalized)) {
             throw new InvalidArgumentException(sprintf(
                 'Unable to create valid slug from: "%s"',
                 $value
@@ -50,8 +50,7 @@ final class SlugVO extends AbstractValueObject
     /**
      * Normalize a string to a valid slug format.
      *
-     * @param string $string The string to normalize
-     *
+     * @param  string  $string  The string to normalize
      * @return string The normalized slug
      */
     private function normalize(string $string): string
@@ -77,24 +76,23 @@ final class SlugVO extends AbstractValueObject
     /**
      * Remove accents from a string.
      *
-     * @param string $string The string to process
-     *
+     * @param  string  $string  The string to process
      * @return string The string without accents
      */
     private function removeAccents(string $string): string
     {
         $accents = [
             '/[áàâãä]/u' => 'a',
-            '/[éèêë]/u'  => 'e',
-            '/[íìîï]/u'  => 'i',
+            '/[éèêë]/u' => 'e',
+            '/[íìîï]/u' => 'i',
             '/[óòôõö]/u' => 'o',
-            '/[úùûü]/u'  => 'u',
-            '/[ýÿ]/u'    => 'y',
-            '/[ç]/u'     => 'c',
-            '/[ñ]/u'     => 'n',
-            '/[æ]/u'     => 'ae',
-            '/[œ]/u'     => 'oe',
-            '/[ß]/u'     => 'ss',
+            '/[úùûü]/u' => 'u',
+            '/[ýÿ]/u' => 'y',
+            '/[ç]/u' => 'c',
+            '/[ñ]/u' => 'n',
+            '/[æ]/u' => 'ae',
+            '/[œ]/u' => 'oe',
+            '/[ß]/u' => 'ss',
         ];
 
         foreach ($accents as $pattern => $replacement) {
@@ -107,8 +105,7 @@ final class SlugVO extends AbstractValueObject
     /**
      * Replace special characters with their text equivalents.
      *
-     * @param string $string The string to process
-     *
+     * @param  string  $string  The string to process
      * @return string The string with special characters replaced
      */
     private function replaceSpecialChars(string $string): string

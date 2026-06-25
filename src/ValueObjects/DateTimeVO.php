@@ -31,14 +31,17 @@ use InvalidArgumentException;
 final class DateTimeVO extends AbstractValueObject
 {
     private const ISO8601_FORMAT = 'Y-m-d\TH:i:sP';
+
     private const DATABASE_FORMAT = 'Y-m-d H:i:s';
+
     private const DATE_FORMAT = 'Y-m-d';
+
     private const TIME_FORMAT = 'H:i:s';
 
     public readonly string $value;
 
     /**
-     * @param string|null $value Datetime string or null for current datetime
+     * @param  string|null  $value  Datetime string or null for current datetime
      */
     public function __construct(?string $value = null)
     {
@@ -163,7 +166,7 @@ final class DateTimeVO extends AbstractValueObject
     /**
      * Format the datetime using a custom format in original timezone.
      *
-     * @param string $format PHP date format (e.g., 'd/m/Y H:i:s')
+     * @param  string  $format  PHP date format (e.g., 'd/m/Y H:i:s')
      */
     public function format(string $format): string
     {
@@ -223,8 +226,7 @@ final class DateTimeVO extends AbstractValueObject
     /**
      * Add an interval to the datetime.
      *
-     * @param string $interval Interval specification (e.g., '1 day', '3 hours', '1 week')
-     *
+     * @param  string  $interval  Interval specification (e.g., '1 day', '3 hours', '1 week')
      * @return self New DateTimeVO with the interval added
      *
      * @throws InvalidArgumentException If interval is invalid
@@ -232,7 +234,7 @@ final class DateTimeVO extends AbstractValueObject
     public function add(string $interval): self
     {
         try {
-            $newDateTime = $this->toDateTimeImmutable()->modify('+' . ltrim($interval, '+'));
+            $newDateTime = $this->toDateTimeImmutable()->modify('+'.ltrim($interval, '+'));
 
             if ($newDateTime === false) {
                 throw new InvalidArgumentException("Invalid interval: {$interval}");
@@ -247,8 +249,8 @@ final class DateTimeVO extends AbstractValueObject
     /**
      * Subtract an interval from the datetime.
      *a
-     * @param string $interval Interval specification (e.g., '1 day', '3 hours', '1 week')
      *
+     * @param  string  $interval  Interval specification (e.g., '1 day', '3 hours', '1 week')
      * @return self New DateTimeVO with the interval subtracted
      *
      * @throws InvalidArgumentException If interval is invalid
@@ -256,7 +258,7 @@ final class DateTimeVO extends AbstractValueObject
     public function sub(string $interval): self
     {
         try {
-            $newDateTime = $this->toDateTimeImmutable()->modify('-' . ltrim($interval, '-'));
+            $newDateTime = $this->toDateTimeImmutable()->modify('-'.ltrim($interval, '-'));
 
             if ($newDateTime === false) {
                 throw new InvalidArgumentException("Invalid interval: {$interval}");

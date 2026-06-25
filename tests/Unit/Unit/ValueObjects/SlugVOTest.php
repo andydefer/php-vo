@@ -249,14 +249,14 @@ final class SlugVOTest extends TestCase
     {
         $slug = SlugVO::from('my-article-title');
 
-        $this->assertSame('my-article-title', (string)$slug);
+        $this->assertSame('my-article-title', (string) $slug);
     }
 
     public function test_to_string_magic_method_from_unformatted(): void
     {
         $slug = SlugVO::from('My Article Title');
 
-        $this->assertSame('my-article-title', (string)$slug);
+        $this->assertSame('my-article-title', (string) $slug);
     }
 
     // ==================== EDGE CASES TESTS ====================
@@ -268,8 +268,6 @@ final class SlugVOTest extends TestCase
 
         SlugVO::from('');
     }
-
-
 
     public function test_handles_mixed_special_characters(): void
     {

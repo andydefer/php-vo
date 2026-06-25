@@ -120,6 +120,7 @@ enum SocialiteProvider: string
         foreach (self::cases() as $case) {
             $names[$case->value] = $case->getDisplayName();
         }
+
         return $names;
     }
 }

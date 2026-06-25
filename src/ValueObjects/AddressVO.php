@@ -24,7 +24,7 @@ use InvalidArgumentException;
  * ]);
  * echo $address->format(); // "123 Main St, 75001 Paris, France"
  */
-final class AddressVO extends AbstractValueObject
+class AddressVO extends AbstractValueObject
 {
     public function __construct(
         private readonly string $street,
@@ -55,10 +55,10 @@ final class AddressVO extends AbstractValueObject
     /**
      * Ensures the address contains all required fields with valid values.
      *
-     * @param string $street The street address
-     * @param string $city The city name
-     * @param PostalCodeVO $postalCode The postal code
-     * @param string $country The country name
+     * @param  string  $street  The street address
+     * @param  string  $city  The city name
+     * @param  PostalCodeVO  $postalCode  The postal code
+     * @param  string  $country  The country name
      *
      * @throws InvalidArgumentException If any required field is empty
      */
@@ -113,8 +113,7 @@ final class AddressVO extends AbstractValueObject
     /**
      * Checks if the address is located in a specific country.
      *
-     * @param string $country The country name to check against (case-insensitive)
-     *
+     * @param  string  $country  The country name to check against (case-insensitive)
      * @return bool True if the address is in the specified country
      */
     public function isInCountry(string $country): bool

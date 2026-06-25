@@ -36,15 +36,15 @@ final class PhoneNumberVO extends AbstractValueObject
     /**
      * Validate the phone number.
      *
-     * @param CallingCode $callingCode The calling code enum
-     * @param string $number The subscriber number (digits only)
+     * @param  CallingCode  $callingCode  The calling code enum
+     * @param  string  $number  The subscriber number (digits only)
      *
      * @throws InvalidArgumentException If validation fails
      */
     private function validate(CallingCode $callingCode, string $number): void
     {
         // Check that number contains only digits
-        if (!preg_match('/^\d+$/', $number)) {
+        if (! preg_match('/^\d+$/', $number)) {
             throw new InvalidArgumentException(
                 sprintf('Phone number must contain only digits, got: %s', $number)
             );
@@ -112,7 +112,7 @@ final class PhoneNumberVO extends AbstractValueObject
      */
     public function toE164(): string
     {
-        return '+' . $this->callingCode->value . $this->number;
+        return '+'.$this->callingCode->value.$this->number;
     }
 
     /**
@@ -125,8 +125,7 @@ final class PhoneNumberVO extends AbstractValueObject
      *   - Calling code has 3 digits (e.g., GF, RE) → groups of 3
      * - If $groupSize is provided: use specified value (2 or 3)
      *
-     * @param int|null $groupSize Number of digits per group (2 or 3), null for auto-detection
-     *
+     * @param  int|null  $groupSize  Number of digits per group (2 or 3), null for auto-detection
      * @return string Human-readable format
      *
      * @throws InvalidArgumentException If groupSize is not 2, 3, or null
@@ -134,7 +133,7 @@ final class PhoneNumberVO extends AbstractValueObject
     public function formatHuman(?int $groupSize = null): string
     {
         // Validate group size
-        if ($groupSize !== null && !in_array($groupSize, [2, 3], true)) {
+        if ($groupSize !== null && ! in_array($groupSize, [2, 3], true)) {
             throw new InvalidArgumentException(
                 sprintf('Group size must be 2, 3, or null (auto), got: %d', $groupSize)
             );
@@ -150,7 +149,7 @@ final class PhoneNumberVO extends AbstractValueObject
         $groups = str_split($this->number, $groupSize);
         $formattedNumber = implode(' ', $groups);
 
-        return '+' . $this->callingCode->value . ' ' . $formattedNumber;
+        return '+'.$this->callingCode->value.' '.$formattedNumber;
     }
 
     /**

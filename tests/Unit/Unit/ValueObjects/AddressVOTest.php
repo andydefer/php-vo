@@ -6,7 +6,6 @@ namespace AndyDefer\PhpVo\Tests\Unit\ValueObjects;
 
 use AndyDefer\PhpVo\Records\AddressRecord;
 use AndyDefer\PhpVo\ValueObjects\AddressVO;
-use AndyDefer\PhpVo\ValueObjects\CoordinatesVO;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
@@ -16,7 +15,7 @@ final class AddressVOTest extends TestCase
         'street' => '123 Main St',
         'city' => 'Paris',
         'postalCode' => '75001',
-        'country' => 'France'
+        'country' => 'France',
     ];
 
     private const VALID_COORDINATES = [
@@ -52,8 +51,8 @@ final class AddressVOTest extends TestCase
         // Assert: Verify coordinates are correctly set
         $this->assertNotNull($address->getCoordinates());
         $this->assertTrue($address->hasCoordinates());
-        $this->assertSame(48.8566, $address->getCoordinates()->latitude);
-        $this->assertSame(2.3522, $address->getCoordinates()->longitude);
+        $this->assertSame(48.8566, $address->getCoordinates()->latitude->getValue());
+        $this->assertSame(2.3522, $address->getCoordinates()->longitude->getValue());
     }
 
     public function test_create_address_with_empty_street_throws_exception(): void
@@ -63,7 +62,7 @@ final class AddressVOTest extends TestCase
             'street' => '',
             'city' => 'Paris',
             'postalCode' => '75001',
-            'country' => 'France'
+            'country' => 'France',
         ];
 
         // Assert: Exception is thrown for empty street
@@ -81,7 +80,7 @@ final class AddressVOTest extends TestCase
             'street' => '123 Main St',
             'city' => '',
             'postalCode' => '75001',
-            'country' => 'France'
+            'country' => 'France',
         ];
 
         // Assert: Exception is thrown for empty city
@@ -99,7 +98,7 @@ final class AddressVOTest extends TestCase
             'street' => '123 Main St',
             'city' => 'Paris',
             'postalCode' => '75001',
-            'country' => ''
+            'country' => '',
         ];
 
         // Assert: Exception is thrown for empty country
@@ -117,7 +116,7 @@ final class AddressVOTest extends TestCase
             'street' => '456 Oak Ave',
             'city' => 'Lyon',
             'postal_code' => '69001',
-            'country' => 'France'
+            'country' => 'France',
         ]);
 
         // Assert: Keys are normalized automatically
@@ -152,8 +151,8 @@ final class AddressVOTest extends TestCase
         $this->assertSame('13001', $address->postalCode->getValue());
         $this->assertSame('France', $address->country);
         $this->assertNotNull($address->getCoordinates());
-        $this->assertSame(43.2965, $address->getCoordinates()->latitude);
-        $this->assertSame(5.3698, $address->getCoordinates()->longitude);
+        $this->assertSame(43.2965, $address->getCoordinates()->latitude->getValue());
+        $this->assertSame(5.3698, $address->getCoordinates()->longitude->getValue());
     }
 
     public function test_create_address_from_existing_address_returns_same_instance(): void
@@ -258,7 +257,7 @@ final class AddressVOTest extends TestCase
             'street' => '456 Oak Ave',
             'city' => 'Lyon',
             'postalCode' => '69001',
-            'country' => 'France'
+            'country' => 'France',
         ]);
 
         // Assert: Same data = equal, different data = not equal
@@ -296,6 +295,6 @@ final class AddressVOTest extends TestCase
         $address = AddressVO::from(self::VALID_ADDRESS_DATA);
 
         // Assert: String casting uses format() method
-        $this->assertSame('123 Main St, 75001 Paris, France', (string)$address);
+        $this->assertSame('123 Main St, 75001 Paris, France', (string) $address);
     }
 }

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace AndyDefer\PhpVo\Tests\Unit\ValueObjects;
 
-use AndyDefer\PhpVo\ValueObjects\CoordinatesVO;
 use AndyDefer\PhpVo\ValueObjects\IdVO;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
@@ -135,7 +134,7 @@ final class IdVOTest extends TestCase
     {
         $id = IdVO::from(123);
 
-        $this->assertSame('123', (string)$id);
+        $this->assertSame('123', (string) $id);
     }
 
     public function test_handles_large_id(): void

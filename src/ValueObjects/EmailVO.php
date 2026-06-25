@@ -9,9 +9,9 @@ use InvalidArgumentException;
 
 /**
  * Email Value Object.
- * 
+ *
  * Represents a validated email address.
- * 
+ *
  * @example
  * $email = EmailVO::from('user@example.com');
  * echo $email->getValue(); // 'user@example.com'
@@ -29,13 +29,13 @@ final class EmailVO extends AbstractValueObject
             return $source;
         }
 
-        if (!is_string($source)) {
+        if (! is_string($source)) {
             throw new InvalidArgumentException('Email must be a string');
         }
 
         $value = trim($source);
 
-        if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
+        if (! filter_var($value, FILTER_VALIDATE_EMAIL)) {
             throw new InvalidArgumentException(sprintf(
                 'Invalid email format: "%s".',
                 $value

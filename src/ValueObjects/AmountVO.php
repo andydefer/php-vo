@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace AndyDefer\PhpVo\ValueObjects;
 
 use AndyDefer\DomainStructures\Abstracts\AbstractValueObject;
-use AndyDefer\DomainStructures\Hydration\Strategy\SingleParameterStrategy;
 use InvalidArgumentException;
 
 /**
@@ -19,7 +18,7 @@ use InvalidArgumentException;
  * $total = $amount->add(AmountVO::from('50.00'));
  * echo $total; // "149.99"
  */
-final class AmountVO extends AbstractValueObject
+class AmountVO extends AbstractValueObject
 {
     private const DECIMALS = 2;
 
@@ -39,7 +38,7 @@ final class AmountVO extends AbstractValueObject
      */
     public function getValue(): float
     {
-        return (float)$this->value;
+        return (float) $this->value;
     }
 
     /**
@@ -59,7 +58,7 @@ final class AmountVO extends AbstractValueObject
      */
     public function toFloat(): float
     {
-        return (float)$this->value;
+        return (float) $this->value;
     }
 
     /**
@@ -69,76 +68,76 @@ final class AmountVO extends AbstractValueObject
      */
     public function toInt(): int
     {
-        return (int)round($this->toFloat() * 100);
+        return (int) round($this->toFloat() * 100);
     }
 
     /**
      * Adds another amount to this one.
      *
-     * @param self $other The amount to add
-     *
+     * @param  self  $other  The amount to add
      * @return self A new instance with the sum
      */
     public function add(self $other): self
     {
         $result = bcadd($this->value, $other->value, self::DECIMALS);
+
         return new self($result);
     }
 
     /**
      * Subtracts another amount from this one.
      *
-     * @param self $other The amount to subtract
-     *
+     * @param  self  $other  The amount to subtract
      * @return self A new instance with the difference
      */
     public function subtract(self $other): self
     {
         $result = bcsub($this->value, $other->value, self::DECIMALS);
+
         return new self($result);
     }
 
     /**
      * Multiplies the amount by a multiplier.
      *
-     * @param float|int|string $multiplier The multiplier value
-     *
+     * @param  float|int|string  $multiplier  The multiplier value
      * @return self A new instance with the product
      */
     public function multiply(float|int|string $multiplier): self
     {
-        $result = bcmul($this->value, (string)$multiplier, self::DECIMALS);
+        $result = bcmul($this->value, (string) $multiplier, self::DECIMALS);
+
         return new self($result);
     }
 
     /**
      * Divides the amount by a divisor.
      *
-     * @param float|int|string $divisor The divisor value (cannot be zero)
-     *
+     * @param  float|int|string  $divisor  The divisor value (cannot be zero)
      * @return self A new instance with the quotient
      *
      * @throws InvalidArgumentException If divisor is zero
      */
     public function divide(float|int|string $divisor): self
     {
-        if ((float)$divisor === 0.0) {
+        if ((float) $divisor === 0.0) {
             throw new InvalidArgumentException('Division by zero');
         }
-        $result = bcdiv($this->value, (string)$divisor, self::DECIMALS);
+        $result = bcdiv($this->value, (string) $divisor, self::DECIMALS);
+
         return new self($result);
     }
 
     /**
      * Calculates a percentage of the current amount.
      *
-     * @param float|int|string $percent The percentage to calculate (e.g., 20 for 20%)
-     *
+     * @param  float|int|string  $percent  The percentage to calculate (e.g., 20 for 20%)
      * @return self A new instance with the percentage value
      */
     public function percentage(float|int|string $percent): self
     {
-        $factor = bcdiv((string)$percent, '100', self::DECIMALS + 2);
+        $factor = bcdiv((string) $percent, '100', self::DECIMALS + 2);
+
         return $this->multiply($factor);
     }
 
@@ -175,27 +174,27 @@ final class AmountVO extends AbstractValueObject
     /**
      * Normalizes the input string by replacing commas and removing invalid characters.
      *
-     * @param string $value The raw input value
-     *
+     * @param  string  $value  The raw input value
      * @return string The normalized value
      */
     private function normalize(string $value): string
     {
         $value = str_replace(',', '.', $value);
         $value = preg_replace('/[^0-9\.\-]/', '', $value);
+
         return $value;
     }
 
     /**
      * Validates the amount format.
      *
-     * @param string $value The normalized value to validate
+     * @param  string  $value  The normalized value to validate
      *
      * @throws InvalidArgumentException If the format is invalid
      */
     private function validate(string $value): void
     {
-        if (!preg_match('/^-?\d+(\.\d{1,2})?$/', $value)) {
+        if (! preg_match('/^-?\d+(\.\d{1,2})?$/', $value)) {
             throw new InvalidArgumentException("Invalid amount format: {$value}");
         }
     }
@@ -203,8 +202,7 @@ final class AmountVO extends AbstractValueObject
     /**
      * Formats the number with exactly 2 decimal places.
      *
-     * @param string $value The normalized value
-     *
+     * @param  string  $value  The normalized value
      * @return string The formatted value with 2 decimal places
      */
     private function formatNumber(string $value): string
@@ -225,7 +223,7 @@ final class AmountVO extends AbstractValueObject
             $decimal = '00';
         }
 
-        return $sign . $integer . '.' . $decimal;
+        return $sign.$integer.'.'.$decimal;
     }
 
     /**

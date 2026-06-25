@@ -349,7 +349,7 @@ final class DateTimeVOTest extends TestCase
     {
         $date = DateTimeVO::from('2024-01-15T14:30:00+01:00');
 
-        $this->assertSame('2024-01-15T14:30:00+01:00', (string)$date);
+        $this->assertSame('2024-01-15T14:30:00+01:00', (string) $date);
     }
 
     // ==================== EDGE CASES TESTS ====================

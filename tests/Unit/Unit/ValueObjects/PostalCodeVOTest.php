@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace AndyDefer\DomainStructures\Tests\Unit\ValueObjects;
 
 use AndyDefer\PhpVo\Tests\UnitTestCase;
-use AndyDefer\PhpVo\ValueObjects\PostalCode;
 use AndyDefer\PhpVo\ValueObjects\PostalCodeVO;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;

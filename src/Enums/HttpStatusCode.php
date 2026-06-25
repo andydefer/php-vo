@@ -17,7 +17,7 @@ enum HttpStatusCode: int
     case PROCESSING = 102;
     case EARLY_HINTS = 103;
 
-        // 2xx: Success Responses
+    // 2xx: Success Responses
     case OK = 200;
     case CREATED = 201;
     case ACCEPTED = 202;
@@ -29,7 +29,7 @@ enum HttpStatusCode: int
     case ALREADY_REPORTED = 208;
     case IM_USED = 226;
 
-        // 3xx: Redirection Responses
+    // 3xx: Redirection Responses
     case MULTIPLE_CHOICES = 300;
     case MOVED_PERMANENTLY = 301;
     case FOUND = 302;
@@ -39,7 +39,7 @@ enum HttpStatusCode: int
     case TEMPORARY_REDIRECT = 307;
     case PERMANENT_REDIRECT = 308;
 
-        // 4xx: Client Error Responses
+    // 4xx: Client Error Responses
     case BAD_REQUEST = 400;
     case UNAUTHORIZED = 401;
     case PAYMENT_REQUIRED = 402;
@@ -70,7 +70,7 @@ enum HttpStatusCode: int
     case REQUEST_HEADER_FIELDS_TOO_LARGE = 431;
     case UNAVAILABLE_FOR_LEGAL_REASONS = 451;
 
-        // 5xx: Server Error Responses
+    // 5xx: Server Error Responses
     case INTERNAL_SERVER_ERROR = 500;
     case NOT_IMPLEMENTED = 501;
     case BAD_GATEWAY = 502;

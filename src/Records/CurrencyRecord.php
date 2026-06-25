@@ -8,8 +8,6 @@ use AndyDefer\DomainStructures\Abstracts\AbstractRecord;
 
 /**
  * CurrencyRecord - Data container for currency values.
- * 
- * @package AndyDefer\PhpVo\Records
  */
 final class CurrencyRecord extends AbstractRecord
 {

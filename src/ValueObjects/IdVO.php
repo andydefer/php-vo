@@ -56,13 +56,12 @@ final class IdVO extends AbstractValueObject
      * Get the ID as a zero-padded string.
      * Example: 123 with length 5 → '00123'
      *
-     * @param int $length Total length of the padded string
-     *
+     * @param  int  $length  Total length of the padded string
      * @return string Zero-padded ID
      */
     public function toZeroPadded(int $length): string
     {
-        return str_pad((string)$this->value, $length, '0', STR_PAD_LEFT);
+        return str_pad((string) $this->value, $length, '0', STR_PAD_LEFT);
     }
 
     /**
@@ -97,6 +96,6 @@ final class IdVO extends AbstractValueObject
 
     public function __toString(): string
     {
-        return (string)$this->value;
+        return (string) $this->value;
     }
 }

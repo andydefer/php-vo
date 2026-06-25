@@ -11,14 +11,12 @@ use AndyDefer\PhpVo\ValueObjects\AmountVO;
 
 /**
  * MoneyRecord - Data container for monetary values.
- * 
- * @package AndyDefer\PhpVo\Records
  */
 final class MoneyRecord extends AbstractRecord
 {
     /**
-     * @param Amount $amount The monetary amount
-     * @param Currency $currency The currency of the amount
+     * @param  Amount  $amount  The monetary amount
+     * @param  Currency  $currency  The currency of the amount
      */
     public function __construct(
         public AmountVO $amount,

@@ -322,7 +322,7 @@ final class AmountVOTest extends TestCase
         $amount = AmountVO::from('99.99');
 
         // Assert: String casting returns formatted value
-        $this->assertSame('99.99', (string)$amount);
+        $this->assertSame('99.99', (string) $amount);
     }
 
     public function test_zero_amount_is_valid(): void

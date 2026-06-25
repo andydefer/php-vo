@@ -6,27 +6,25 @@ namespace AndyDefer\PhpVo\Enums;
 
 /**
  * Enum representing all countries with their ISO 3166-1 codes (alpha-2 and alpha-3).
- * 
+ *
  * @example
  * // Get country by alpha-2 code
  * $country = Country::FR;
- * 
+ *
  * // Get alpha-3 code
  * echo $country->value; // "FRA"
- * 
+ *
  * // Get alpha-2 code
  * echo $country->name; // "FR"
- * 
+ *
  * // Get display name
  * echo $country->getDisplayName(); // "France"
- * 
+ *
  * // From alpha-3 code
  * $country = Country::from('COD'); // Country::CD
- * 
+ *
  * // From alpha-2 code
  * $country = Country::tryFromName('CD'); // Country::CD
- * 
- * @package AndyDefer\PhpVo\Enums
  */
 enum Country: string
 {

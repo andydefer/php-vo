@@ -6,24 +6,22 @@ namespace AndyDefer\PhpVo\Enums;
 
 /**
  * Enum representing world currencies with their ISO 4217 codes and symbols.
- * 
+ *
  * @example
  * // Get currency by code
  * $currency = Currency::EUR;
- * 
+ *
  * // Get ISO code
  * echo $currency->getIsoCode(); // "EUR"
- * 
+ *
  * // Get symbol
  * echo $currency->getSymbol(); // "€"
- * 
+ *
  * // Get display name
  * echo $currency->getDisplayName(); // "Euro"
- * 
+ *
  * // From ISO code
  * $currency = Currency::fromIsoCode('USD'); // Currency::USD
- * 
- * @package AndyDefer\PhpVo\Enums
  */
 enum Currency: string
 {
@@ -39,7 +37,7 @@ enum Currency: string
     case AWG = 'AWG'; // Florin arubais
     case AZN = 'AZN'; // Manat azerbaïdjanais
 
-        // Devises européennes
+    // Devises européennes
     case BAM = 'BAM'; // Mark convertible de Bosnie-Herzégovine
     case BBD = 'BBD'; // Dollar barbadien
     case BDT = 'BDT'; // Taka bangladais

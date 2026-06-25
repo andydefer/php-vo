@@ -9,8 +9,6 @@ use AndyDefer\PhpVo\Enums\CallingCode;
 
 /**
  * Record representing a phone number with calling code and subscriber number.
- *
- * @package AndyDefer\PhpVo\Records
  */
 final class PhoneNumberRecord extends AbstractRecord
 {

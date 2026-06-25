@@ -6,24 +6,22 @@ namespace AndyDefer\PhpVo\Enums;
 
 /**
  * Enum representing telephone country codes (ITU-T E.164) with ISO 3166-1 alpha-2 keys.
- * 
+ *
  * @example
  * // Get telephone code by country
  * $code = TelephoneCode::FR;
- * 
+ *
  * // Get telephone code value
  * echo $code->value; // "33"
- * 
+ *
  * // Get formatted telephone code
  * echo '+' . $code->value; // "+33"
- * 
+ *
  * // Get display name
  * echo $code->getDisplayName(); // "France (+33)"
- * 
+ *
  * // From alpha-2 key
  * $code = TelephoneCode::tryFromName('CD'); // TelephoneCode::CD
- * 
- * @package AndyDefer\PhpVo\Enums
  */
 enum CallingCode: string
 {

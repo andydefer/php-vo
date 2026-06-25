@@ -6,9 +6,7 @@ namespace AndyDefer\PhpVo\Tests\Unit\ValueObjects;
 
 use AndyDefer\PhpVo\Enums\Currency;
 use AndyDefer\PhpVo\Records\MoneyRecord;
-use AndyDefer\PhpVo\ValueObjects\Amount;
 use AndyDefer\PhpVo\ValueObjects\AmountVO;
-use AndyDefer\PhpVo\ValueObjects\Money;
 use AndyDefer\PhpVo\ValueObjects\MoneyVO;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;

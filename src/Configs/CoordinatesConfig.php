@@ -4,37 +4,38 @@ declare(strict_types=1);
 
 namespace AndyDefer\PhpVo\Configs;
 
-use AndyDefer\DomainStructures\Abstracts\AbstractConfig;
+use AndyDefer\PhpVo\Contracts\CoordinatesConfigInterface;
+use AndyDefer\PhpVo\ValueObjects\Types\FloatVO;
 
-final class CoordinatesConfig extends AbstractConfig
+final class CoordinatesConfig implements CoordinatesConfigInterface
 {
-    public function latitudeMin(): float
+    public function latitudeMin(): FloatVO
     {
-        return -90.0;
+        return FloatVO::from(-90.0);
     }
 
-    public function latitudeMax(): float
+    public function latitudeMax(): FloatVO
     {
-        return 90.0;
+        return FloatVO::from(90.0);
     }
 
-    public function longitudeMin(): float
+    public function longitudeMin(): FloatVO
     {
-        return -180.0;
+        return FloatVO::from(-180.0);
     }
 
-    public function longitudeMax(): float
+    public function longitudeMax(): FloatVO
     {
-        return 180.0;
+        return FloatVO::from(180.0);
     }
 
-    public function earthRadiusKm(): float
+    public function earthRadiusKm(): FloatVO
     {
-        return 6371.0;
+        return FloatVO::from(6371.0);
     }
 
-    public function earthRadiusMiles(): float
+    public function earthRadiusMiles(): FloatVO
     {
-        return 3959.0;
+        return FloatVO::from(3959.0);
     }
 }

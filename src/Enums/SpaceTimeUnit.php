@@ -19,43 +19,43 @@ enum SpaceTimeUnit: string
     case MICROMETRE = 'µm';
     case NANOMETRE = 'nm';
 
-        // ==================== LENGTH (Annexes - Special units) ====================
+    // ==================== LENGTH (Annexes - Special units) ====================
     case ANGSTROM = 'Å';
     case NAUTICAL_MILE = 'M';
     case LIGHT_YEAR = 'ly';
     case ASTRONOMICAL_UNIT = 'ua';
     case PARSEC = 'pc';
 
-        // ==================== AREA (Derived units) ====================
+    // ==================== AREA (Derived units) ====================
     case SQUARE_METRE = 'm²';
     case ARE = 'a';
     case HECTARE = 'ha';
 
-        // ==================== VOLUME (Derived units) ====================
+    // ==================== VOLUME (Derived units) ====================
     case CUBIC_METRE = 'm³';
     case LITRE = 'L';
 
-        // ==================== TIME (Base units and multiples) ====================
+    // ==================== TIME (Base units and multiples) ====================
     case SECOND = 's';
     case MINUTE = 'min';
     case HOUR = 'h';
     case DAY = 'd';
 
-        // ==================== SPEED (Derived units) ====================
+    // ==================== SPEED (Derived units) ====================
     case METRE_PER_SECOND = 'm/s';
     case KILOMETRE_PER_HOUR = 'km/h';
     case KNOT = 'kn';
 
-        // ==================== ACCELERATION (Derived units) ====================
+    // ==================== ACCELERATION (Derived units) ====================
     case METRE_PER_SQUARE_SECOND = 'm/s²';
     case GAL = 'Gal';
 
-        // ==================== LOGARITHMIC QUANTITIES (Annex - Levels) ====================
+    // ==================== LOGARITHMIC QUANTITIES (Annex - Levels) ====================
     case NEPER = 'Np';
     case BEL = 'B';
     case DECIBEL = 'dB';
 
-        // ==================== ANGLE (Derived units - mentioned in ISO 80000-3) ====================
+    // ==================== ANGLE (Derived units - mentioned in ISO 80000-3) ====================
     case RADIAN = 'rad';
     case DEGREE = '°';
     case ARC_MINUTE = "'";
@@ -75,7 +75,7 @@ enum SpaceTimeUnit: string
             self::NAUTICAL_MILE,
             self::LIGHT_YEAR,
             self::ASTRONOMICAL_UNIT,
-            self::PARSEC
+            self::PARSEC,
         ]);
     }
 
@@ -85,7 +85,7 @@ enum SpaceTimeUnit: string
             self::SECOND,
             self::MINUTE,
             self::HOUR,
-            self::DAY
+            self::DAY,
         ]);
     }
 

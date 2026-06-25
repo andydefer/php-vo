@@ -18,7 +18,7 @@ final class PhoneNumberVOTest extends TestCase
     {
         $phone = PhoneNumberVO::from([
             'callingCode' => 'FR',
-            'number' => '612345678'
+            'number' => '612345678',
         ]);
 
         $this->assertSame(CallingCode::FR, $phone->getCallingCode());
@@ -29,7 +29,7 @@ final class PhoneNumberVOTest extends TestCase
     {
         $phone = PhoneNumberVO::from([
             'callingCode' => 'US',
-            'number' => '2025550123'
+            'number' => '2025550123',
         ]);
 
         $this->assertSame(CallingCode::US, $phone->getCallingCode());
@@ -40,7 +40,7 @@ final class PhoneNumberVOTest extends TestCase
     {
         $phone = PhoneNumberVO::from([
             'callingCode' => 'GB',
-            'number' => '7911123456'
+            'number' => '7911123456',
         ]);
 
         $this->assertSame(CallingCode::GB, $phone->getCallingCode());
@@ -280,7 +280,7 @@ final class PhoneNumberVOTest extends TestCase
     {
         $phone = PhoneNumberVO::from(['callingCode' => 'FR', 'number' => '612345678']);
 
-        $this->assertSame('+33 6 12 34 56 78', (string)$phone);
+        $this->assertSame('+33 6 12 34 56 78', (string) $phone);
     }
 
     // ==================== EDGE CASES TESTS ====================

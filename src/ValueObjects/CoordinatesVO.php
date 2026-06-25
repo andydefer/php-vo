@@ -6,130 +6,158 @@ namespace AndyDefer\PhpVo\ValueObjects;
 
 use AndyDefer\DomainStructures\Abstracts\AbstractValueObject;
 use AndyDefer\PhpVo\Configs\CoordinatesConfig;
+use AndyDefer\PhpVo\Contracts\CoordinatesConfigInterface;
 use AndyDefer\PhpVo\Enums\SpaceTimeUnit;
 use AndyDefer\PhpVo\Records\CoordinatesRecord;
+use AndyDefer\PhpVo\ValueObjects\Types\BoolVO;
+use AndyDefer\PhpVo\ValueObjects\Types\FloatVO;
+use AndyDefer\PhpVo\ValueObjects\Types\StringVO;
 use InvalidArgumentException;
 
 final class CoordinatesVO extends AbstractValueObject
 {
-    private static ?CoordinatesConfig $config = null;
+    private static ?CoordinatesConfigInterface $config = null;
 
     public function __construct(
-        public readonly float $latitude,
-        public readonly float $longitude,
+        private readonly FloatVO $latitude,
+        private readonly FloatVO $longitude,
     ) {
-        $this->validate($latitude, $longitude);
+        $this->validate();
     }
 
-    private static function getConfig(): CoordinatesConfig
+    private static function getConfig(): CoordinatesConfigInterface
     {
-        if (self::$config === null) {
-            self::$config = new CoordinatesConfig();
+        return self::$config ??= new CoordinatesConfig;
+    }
+
+    private function validate(): void
+    {
+        $config = self::getConfig();
+
+        if ($this->latitude->lessThan($config->latitudeMin())->getValue() ||
+            $this->latitude->greaterThan($config->latitudeMax())->getValue()) {
+            throw new InvalidArgumentException(
+                StringVO::from('Latitude must be between {min} and {max}, got {value}')
+                    ->format([
+                        'min' => $config->latitudeMin()->format(1),
+                        'max' => $config->latitudeMax()->format(1),
+                        'value' => $this->latitude->format(6),
+                    ])
+                    ->getValue()
+            );
         }
 
-        return self::$config;
+        if ($this->longitude->lessThan($config->longitudeMin())->getValue() ||
+            $this->longitude->greaterThan($config->longitudeMax())->getValue()) {
+            throw new InvalidArgumentException(
+                StringVO::from('Longitude must be between {min} and {max}, got {value}')
+                    ->format([
+                        'min' => $config->longitudeMin()->format(1)->getValue(),
+                        'max' => $config->longitudeMax()->format(1)->getValue(),
+                        'value' => $this->longitude->format(6)->getValue(),
+                    ])
+                    ->getValue()
+            );
+        }
     }
 
     public function getValue(): CoordinatesRecord
     {
         return new CoordinatesRecord(
-            latitude: $this->latitude,
-            longitude: $this->longitude,
+            latitude: $this->latitude->getValue(),
+            longitude: $this->longitude->getValue(),
         );
     }
 
-    private function validate(float $latitude, float $longitude): void
+    public function distanceTo(mixed $other, SpaceTimeUnit $unit = SpaceTimeUnit::KILOMETRE): FloatVO
     {
-        $config = self::getConfig();
+        $other = self::from($other);
 
-        if ($latitude < $config->latitudeMin() || $latitude > $config->latitudeMax()) {
-            throw new InvalidArgumentException(
-                sprintf(
-                    'Latitude must be between %.1f and %.1f, got %.6f',
-                    $config->latitudeMin(),
-                    $config->latitudeMax(),
-                    $latitude
-                )
-            );
+        $latFrom = $this->latitude->multiply(M_PI / 180);
+        $latTo = $other->latitude->multiply(M_PI / 180);
+        $lonFrom = $this->longitude->multiply(M_PI / 180);
+        $lonTo = $other->longitude->multiply(M_PI / 180);
+
+        $latDelta = $latTo->subtract($latFrom);
+        $lonDelta = $lonTo->subtract($lonFrom);
+
+        $a = $latDelta->divide(2)->sin()->pow(2)->add(
+            $latFrom->cos()->multiply($latTo->cos())->multiply(
+                $lonDelta->divide(2)->sin()->pow(2)
+            )
+        );
+
+        // ✅ Chaînage complet avec gestion des erreurs d'arrondi
+        $c = $a->clamp(0, 1)
+            ->sqrt()
+            ->atan2(
+                $a->subtract(1)->abs()->sqrt()
+            )
+            ->multiply(2);
+
+        $radius = self::getConfig()->earthRadiusKm();
+
+        if ($unit === SpaceTimeUnit::METRE) {
+            $radius = $radius->multiply(1000);
         }
 
-        if ($longitude < $config->longitudeMin() || $longitude > $config->longitudeMax()) {
-            throw new InvalidArgumentException(
-                sprintf(
-                    'Longitude must be between %.1f and %.1f, got %.6f',
-                    $config->longitudeMin(),
-                    $config->longitudeMax(),
-                    $longitude
-                )
-            );
-        }
+        return $c->multiply($radius)->round(2);
     }
 
-    public function distanceTo(self $other, SpaceTimeUnit $unit = SpaceTimeUnit::KILOMETRE): float
+    public function isSameLocation(mixed $other, mixed $tolerance = null): BoolVO
     {
-        $config = self::getConfig();
+        $other = self::from($other);
+        $tolerance = $tolerance !== null ? FloatVO::from($tolerance)->getValue() : 0.0001;
 
-        $latFrom = deg2rad($this->latitude);
-        $latTo = deg2rad($other->latitude);
-        $lonFrom = deg2rad($this->longitude);
-        $lonTo = deg2rad($other->longitude);
-
-        $latDelta = $latTo - $latFrom;
-        $lonDelta = $lonTo - $lonFrom;
-
-        $a = sin($latDelta / 2) ** 2 +
-            cos($latFrom) * cos($latTo) *
-            sin($lonDelta / 2) ** 2;
-
-        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
-
-        $radiusInKm = $config->earthRadiusKm();
-        $radius = match ($unit) {
-            SpaceTimeUnit::KILOMETRE => $radiusInKm,
-            SpaceTimeUnit::METRE => $radiusInKm * 1000,
-            default => $radiusInKm,
-        };
-
-        return round($c * $radius, 2);
-    }
-
-    public function isSameLocation(self $other, float $tolerance = 0.0001): bool
-    {
-        return abs($this->latitude - $other->latitude) <= $tolerance &&
-            abs($this->longitude - $other->longitude) <= $tolerance;
-    }
-
-    public function format(int $decimals = 4): string
-    {
-        return sprintf(
-            '%.' . $decimals . 'f, %.' . $decimals . 'f',
-            $this->latitude,
-            $this->longitude
+        return BoolVO::from(
+            $this->latitude->subtract($other->latitude)->abs()->lessThan($tolerance)->getValue() &&
+            $this->longitude->subtract($other->longitude)->abs()->lessThan($tolerance)->getValue()
         );
     }
 
-    public function isNorthernHemisphere(): bool
+    public function format(int $decimals = 4): StringVO
     {
-        return $this->latitude > 0;
+        return StringVO::from(
+            sprintf(
+                '%.'.$decimals.'f, %.'.$decimals.'f',
+                $this->latitude->getValue(),
+                $this->longitude->getValue()
+            )
+        );
     }
 
-    public function isSouthernHemisphere(): bool
+    public function isNorthernHemisphere(): BoolVO
     {
-        return $this->latitude < 0;
+        return $this->latitude->greaterThan(0);
     }
 
-    public function isEasternHemisphere(): bool
+    public function isSouthernHemisphere(): BoolVO
     {
-        return $this->longitude > 0;
+        return $this->latitude->lessThan(0);
     }
 
-    public function isWesternHemisphere(): bool
+    public function isEasternHemisphere(): BoolVO
     {
-        return $this->longitude < 0;
+        return $this->longitude->greaterThan(0);
+    }
+
+    public function isWesternHemisphere(): BoolVO
+    {
+        return $this->longitude->lessThan(0);
+    }
+
+    public function getLatitude(): FloatVO
+    {
+        return $this->latitude;
+    }
+
+    public function getLongitude(): FloatVO
+    {
+        return $this->longitude;
     }
 
     public function __toString(): string
     {
-        return $this->format();
+        return $this->format()->getValue();
     }
 }

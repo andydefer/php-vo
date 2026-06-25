@@ -9,9 +9,9 @@ use InvalidArgumentException;
 
 /**
  * Postal Code Value Object.
- * 
+ *
  * Represents a validated 5-digit postal code (French format).
- * 
+ *
  * @example
  * $postalCode = PostalCodeVO::from('75001');
  * echo $postalCode->getValue(); // '75001'
@@ -23,8 +23,8 @@ final class PostalCodeVO extends AbstractValueObject
     /**
      * Create a PostalCode instance from various source formats.
      *
-     * @param mixed $source The source data (string or PostalCode instance)
-     * @return static
+     * @param  mixed  $source  The source data (string or PostalCode instance)
+     *
      * @throws InvalidArgumentException If the postal code format is invalid
      */
     public static function from(mixed $source): static
@@ -33,13 +33,13 @@ final class PostalCodeVO extends AbstractValueObject
             return $source;
         }
 
-        if (!is_string($source)) {
+        if (! is_string($source)) {
             throw new InvalidArgumentException('Postal code must be a string');
         }
 
         $value = trim($source);
 
-        if (!preg_match('/^[0-9]{5}$/', $value)) {
+        if (! preg_match('/^[0-9]{5}$/', $value)) {
             throw new InvalidArgumentException(sprintf(
                 'Invalid postal code format: "%s". Must be 5 digits.',
                 $value
