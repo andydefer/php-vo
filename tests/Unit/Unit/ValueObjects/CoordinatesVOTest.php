@@ -189,16 +189,25 @@ final class CoordinatesVOTest extends TestCase
 
     public function test_is_same_location_with_mixed_tolerance(): void
     {
+        // Arrange
         $point1 = CoordinatesVO::from(self::PARIS_COORDINATES);
         $point2 = CoordinatesVO::from([
             'latitude' => 48.8567,
             'longitude' => 2.3523,
         ]);
 
-        $this->assertTrue($point1->isSameLocation($point2, '0.0002')->getValue());
-        $this->assertFalse($point1->isSameLocation($point2, FloatVO::from(0.00001))->getValue());
-    }
+        // Act & Assert - With float tolerance
+        $this->assertTrue(
+            $point1->isSameLocation($point2, 0.0002)->getValue(),
+            'Should be true with tolerance 0.0002'
+        );
 
+        // Act & Assert - With smaller float tolerance
+        $this->assertFalse(
+            $point1->isSameLocation($point2, 0.00001)->getValue(),
+            'Should be false with tolerance 0.00001'
+        );
+    }
     // ========== TESTS DE FORMATAGE ==========
 
     public function test_format_returns_formatted_coordinates(): void
