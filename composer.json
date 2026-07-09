@@ -11,8 +11,7 @@
     ],
     "require": {
         "php": ">=8.1",
-        "andydefer/domain-structures": "^1.21.1",
-        "nesbot/carbon": "^3.13"
+        "andydefer/domain-structures": "^1.21.1"
     },
     "require-dev": {
         "orchestra/testbench": "^9.0|^10.0",
