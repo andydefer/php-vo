@@ -1,3 +1,4 @@
+```markdown
 # Value Objects
 
 | Value Object | Description | Documentation |
@@ -12,3 +13,5 @@
 | SlugVO | Slug URL-friendly avec normalisation automatique | [SlugVO](value-objects/slug-vo.md) |
 | IdVO | Identifiant entier positif | [IdVO](value-objects/id-vo.md) |
 | CoordinatesVO | Coordonnées géographiques (latitude/longitude) avec validation des plages et calcul de distance (formule de Haversine) | [CoordinatesVO](value-objects/coordinates-vo.md) |
+| TimeVO | Heure de la journée (H:i:s) avec arithmétique et comparaisons, support du passage de minuit | [TimeVO](value-objects/time-vo.md) |
+```
