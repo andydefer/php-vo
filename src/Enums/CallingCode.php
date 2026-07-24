@@ -9,527 +9,619 @@ namespace AndyDefer\PhpVo\Enums;
  *
  * @example
  * // Get telephone code by country
- * $code = TelephoneCode::FR;
+ * $code = CallingCode::FR;
  *
  * // Get telephone code value
- * echo $code->value; // "33"
+ * echo $code->getCallingCode(); // "33"
  *
  * // Get formatted telephone code
- * echo '+' . $code->value; // "+33"
+ * echo '+' . $code->getCallingCode(); // "+33"
  *
  * // Get display name
  * echo $code->getDisplayName(); // "France (+33)"
  *
  * // From alpha-2 key
- * $code = TelephoneCode::tryFromName('CD'); // TelephoneCode::CD
+ * $code = CallingCode::tryFromName('CD'); // CallingCode::CD
+ *
+ * // Get all countries sharing the same calling code
+ * $countries = CallingCode::getCountriesByCallingCode('672'); // [CallingCode::AQ, CallingCode::HM, CallingCode::NF]
  */
 enum CallingCode: string
 {
-    case AF = '93';
-    case AX = '358';
-    case AL = '355';
-    case DZ = '213';
-    case AS = '1684';
-    case AD = '376';
-    case AO = '244';
-    case AI = '1264';
-    case AQ = '672';
-    case AG = '1268';
-    case AR = '54';
-    case AM = '374';
-    case AW = '297';
-    case AU = '61';
-    case AT = '43';
-    case AZ = '994';
-    case BS = '1242';
-    case BH = '973';
-    case BD = '880';
-    case BB = '1246';
-    case BY = '375';
-    case BE = '32';
-    case BZ = '501';
-    case BJ = '229';
-    case BM = '1441';
-    case BT = '975';
-    case BO = '591';
-    case BQ = '599';
-    case BA = '387';
-    case BW = '267';
-    case BV = '47';
-    case BR = '55';
-    case IO = '246';
-    case BN = '673';
-    case BG = '359';
-    case BF = '226';
-    case BI = '257';
-    case CV = '238';
-    case KH = '855';
-    case CM = '237';
-    case CA = '1';
-    case KY = '1345';
-    case CF = '236';
-    case TD = '235';
-    case CL = '56';
-    case CN = '86';
-    case CX = '61';
-    case CC = '61';
-    case CO = '57';
-    case KM = '269';
-    case CG = '242';
-    case CD = '243';
-    case CK = '682';
-    case CR = '506';
-    case CI = '225';
-    case HR = '385';
-    case CU = '53';
-    case CW = '599';
-    case CY = '357';
-    case CZ = '420';
-    case DK = '45';
-    case DJ = '253';
-    case DM = '1767';
-    case DO = '1809';
-    case EC = '593';
-    case EG = '20';
-    case SV = '503';
-    case GQ = '240';
-    case ER = '291';
-    case EE = '372';
-    case SZ = '268';
-    case ET = '251';
-    case FK = '500';
-    case FO = '298';
-    case FJ = '679';
-    case FI = '358';
-    case FR = '33';
-    case GF = '594';
-    case PF = '689';
-    case TF = '262';
-    case GA = '241';
-    case GM = '220';
-    case GE = '995';
-    case DE = '49';
-    case GH = '233';
-    case GI = '350';
-    case GR = '30';
-    case GL = '299';
-    case GD = '1473';
-    case GP = '590';
-    case GU = '1671';
-    case GT = '502';
-    case GG = '44';
-    case GN = '224';
-    case GW = '245';
-    case GY = '592';
-    case HT = '509';
-    case HM = '672';
-    case VA = '39';
-    case HN = '504';
-    case HK = '852';
-    case HU = '36';
-    case IS = '354';
-    case IN = '91';
-    case ID = '62';
-    case IR = '98';
-    case IQ = '964';
-    case IE = '353';
-    case IM = '44';
-    case IL = '972';
-    case IT = '39';
-    case JM = '1876';
-    case JP = '81';
-    case JE = '44';
-    case JO = '962';
-    case KZ = '7';
-    case KE = '254';
-    case KI = '686';
-    case KP = '850';
-    case KR = '82';
-    case KW = '965';
-    case KG = '996';
-    case LA = '856';
-    case LV = '371';
-    case LB = '961';
-    case LS = '266';
-    case LR = '231';
-    case LY = '218';
-    case LI = '423';
-    case LT = '370';
-    case LU = '352';
-    case MO = '853';
-    case MG = '261';
-    case MW = '265';
-    case MY = '60';
-    case MV = '960';
-    case ML = '223';
-    case MT = '356';
-    case MH = '692';
-    case MQ = '596';
-    case MR = '222';
-    case MU = '230';
-    case YT = '262';
-    case MX = '52';
-    case FM = '691';
-    case MD = '373';
-    case MC = '377';
-    case MN = '976';
-    case ME = '382';
-    case MS = '1664';
-    case MA = '212';
-    case MZ = '258';
-    case MM = '95';
-    case NA = '264';
-    case NR = '674';
-    case NP = '977';
-    case NL = '31';
-    case NC = '687';
-    case NZ = '64';
-    case NI = '505';
-    case NE = '227';
-    case NG = '234';
-    case NU = '683';
-    case NF = '672';
-    case MK = '389';
-    case MP = '1670';
-    case NO = '47';
-    case OM = '968';
-    case PK = '92';
-    case PW = '680';
-    case PS = '970';
-    case PA = '507';
-    case PG = '675';
-    case PY = '595';
-    case PE = '51';
-    case PH = '63';
-    case PN = '870';
-    case PL = '48';
-    case PT = '351';
-    case PR = '1787';
-    case QA = '974';
-    case RE = '262';
-    case RO = '40';
-    case RU = '7';
-    case RW = '250';
-    case BL = '590';
-    case SH = '290';
-    case KN = '1869';
-    case LC = '1758';
-    case MF = '590';
-    case PM = '508';
-    case VC = '1784';
-    case WS = '685';
-    case SM = '378';
-    case ST = '239';
-    case SA = '966';
-    case SN = '221';
-    case RS = '381';
-    case SC = '248';
-    case SL = '232';
-    case SG = '65';
-    case SX = '1721';
-    case SK = '421';
-    case SI = '386';
-    case SB = '677';
-    case SO = '252';
-    case ZA = '27';
-    case GS = '500';
-    case SS = '211';
-    case ES = '34';
-    case LK = '94';
-    case SD = '249';
-    case SR = '597';
-    case SJ = '47';
-    case SE = '46';
-    case CH = '41';
-    case SY = '963';
-    case TW = '886';
-    case TJ = '992';
-    case TZ = '255';
-    case TH = '66';
-    case TL = '670';
-    case TG = '228';
-    case TK = '690';
-    case TO = '676';
-    case TT = '1868';
-    case TN = '216';
-    case TR = '90';
-    case TM = '993';
-    case TC = '1649';
-    case TV = '688';
-    case UG = '256';
-    case UA = '380';
-    case AE = '971';
-    case GB = '44';
-    case US = '1';
-    case UM = '1';
-    case UY = '598';
-    case UZ = '998';
-    case VU = '678';
-    case VE = '58';
-    case VN = '84';
-    case VG = '1284';
-    case VI = '1340';
-    case WF = '681';
-    case EH = '212';
-    case YE = '967';
-    case ZM = '260';
-    case ZW = '263';
+    case AF = 'AF';
+    case AX = 'AX';
+    case AL = 'AL';
+    case DZ = 'DZ';
+    case AS = 'AS';
+    case AD = 'AD';
+    case AO = 'AO';
+    case AI = 'AI';
+    case AQ = 'AQ';
+    case AG = 'AG';
+    case AR = 'AR';
+    case AM = 'AM';
+    case AW = 'AW';
+    case AU = 'AU';
+    case AT = 'AT';
+    case AZ = 'AZ';
+    case BS = 'BS';
+    case BH = 'BH';
+    case BD = 'BD';
+    case BB = 'BB';
+    case BY = 'BY';
+    case BE = 'BE';
+    case BZ = 'BZ';
+    case BJ = 'BJ';
+    case BM = 'BM';
+    case BT = 'BT';
+    case BO = 'BO';
+    case BQ = 'BQ';
+    case BA = 'BA';
+    case BW = 'BW';
+    case BV = 'BV';
+    case BR = 'BR';
+    case IO = 'IO';
+    case BN = 'BN';
+    case BG = 'BG';
+    case BF = 'BF';
+    case BI = 'BI';
+    case CV = 'CV';
+    case KH = 'KH';
+    case CM = 'CM';
+    case CA = 'CA';
+    case KY = 'KY';
+    case CF = 'CF';
+    case TD = 'TD';
+    case CL = 'CL';
+    case CN = 'CN';
+    case CX = 'CX';
+    case CC = 'CC';
+    case CO = 'CO';
+    case KM = 'KM';
+    case CG = 'CG';
+    case CD = 'CD';
+    case CK = 'CK';
+    case CR = 'CR';
+    case CI = 'CI';
+    case HR = 'HR';
+    case CU = 'CU';
+    case CW = 'CW';
+    case CY = 'CY';
+    case CZ = 'CZ';
+    case DK = 'DK';
+    case DJ = 'DJ';
+    case DM = 'DM';
+    case DO = 'DO';
+    case EC = 'EC';
+    case EG = 'EG';
+    case SV = 'SV';
+    case GQ = 'GQ';
+    case ER = 'ER';
+    case EE = 'EE';
+    case SZ = 'SZ';
+    case ET = 'ET';
+    case FK = 'FK';
+    case FO = 'FO';
+    case FJ = 'FJ';
+    case FI = 'FI';
+    case FR = 'FR';
+    case GF = 'GF';
+    case PF = 'PF';
+    case TF = 'TF';
+    case GA = 'GA';
+    case GM = 'GM';
+    case GE = 'GE';
+    case DE = 'DE';
+    case GH = 'GH';
+    case GI = 'GI';
+    case GR = 'GR';
+    case GL = 'GL';
+    case GD = 'GD';
+    case GP = 'GP';
+    case GU = 'GU';
+    case GT = 'GT';
+    case GG = 'GG';
+    case GN = 'GN';
+    case GW = 'GW';
+    case GY = 'GY';
+    case HT = 'HT';
+    case HM = 'HM';
+    case VA = 'VA';
+    case HN = 'HN';
+    case HK = 'HK';
+    case HU = 'HU';
+    case IS = 'IS';
+    case IN = 'IN';
+    case ID = 'ID';
+    case IR = 'IR';
+    case IQ = 'IQ';
+    case IE = 'IE';
+    case IM = 'IM';
+    case IL = 'IL';
+    case IT = 'IT';
+    case JM = 'JM';
+    case JP = 'JP';
+    case JE = 'JE';
+    case JO = 'JO';
+    case KZ = 'KZ';
+    case KE = 'KE';
+    case KI = 'KI';
+    case KP = 'KP';
+    case KR = 'KR';
+    case KW = 'KW';
+    case KG = 'KG';
+    case LA = 'LA';
+    case LV = 'LV';
+    case LB = 'LB';
+    case LS = 'LS';
+    case LR = 'LR';
+    case LY = 'LY';
+    case LI = 'LI';
+    case LT = 'LT';
+    case LU = 'LU';
+    case MO = 'MO';
+    case MG = 'MG';
+    case MW = 'MW';
+    case MY = 'MY';
+    case MV = 'MV';
+    case ML = 'ML';
+    case MT = 'MT';
+    case MH = 'MH';
+    case MQ = 'MQ';
+    case MR = 'MR';
+    case MU = 'MU';
+    case YT = 'YT';
+    case MX = 'MX';
+    case FM = 'FM';
+    case MD = 'MD';
+    case MC = 'MC';
+    case MN = 'MN';
+    case ME = 'ME';
+    case MS = 'MS';
+    case MA = 'MA';
+    case MZ = 'MZ';
+    case MM = 'MM';
+    case NA = 'NA';
+    case NR = 'NR';
+    case NP = 'NP';
+    case NL = 'NL';
+    case NC = 'NC';
+    case NZ = 'NZ';
+    case NI = 'NI';
+    case NE = 'NE';
+    case NG = 'NG';
+    case NU = 'NU';
+    case NF = 'NF';
+    case MK = 'MK';
+    case MP = 'MP';
+    case NO = 'NO';
+    case OM = 'OM';
+    case PK = 'PK';
+    case PW = 'PW';
+    case PS = 'PS';
+    case PA = 'PA';
+    case PG = 'PG';
+    case PY = 'PY';
+    case PE = 'PE';
+    case PH = 'PH';
+    case PN = 'PN';
+    case PL = 'PL';
+    case PT = 'PT';
+    case PR = 'PR';
+    case QA = 'QA';
+    case RE = 'RE';
+    case RO = 'RO';
+    case RU = 'RU';
+    case RW = 'RW';
+    case BL = 'BL';
+    case SH = 'SH';
+    case KN = 'KN';
+    case LC = 'LC';
+    case MF = 'MF';
+    case PM = 'PM';
+    case VC = 'VC';
+    case WS = 'WS';
+    case SM = 'SM';
+    case ST = 'ST';
+    case SA = 'SA';
+    case SN = 'SN';
+    case RS = 'RS';
+    case SC = 'SC';
+    case SL = 'SL';
+    case SG = 'SG';
+    case SX = 'SX';
+    case SK = 'SK';
+    case SI = 'SI';
+    case SB = 'SB';
+    case SO = 'SO';
+    case ZA = 'ZA';
+    case GS = 'GS';
+    case SS = 'SS';
+    case ES = 'ES';
+    case LK = 'LK';
+    case SD = 'SD';
+    case SR = 'SR';
+    case SJ = 'SJ';
+    case SE = 'SE';
+    case CH = 'CH';
+    case SY = 'SY';
+    case TW = 'TW';
+    case TJ = 'TJ';
+    case TZ = 'TZ';
+    case TH = 'TH';
+    case TL = 'TL';
+    case TG = 'TG';
+    case TK = 'TK';
+    case TO = 'TO';
+    case TT = 'TT';
+    case TN = 'TN';
+    case TR = 'TR';
+    case TM = 'TM';
+    case TC = 'TC';
+    case TV = 'TV';
+    case UG = 'UG';
+    case UA = 'UA';
+    case AE = 'AE';
+    case GB = 'GB';
+    case US = 'US';
+    case UM = 'UM';
+    case UY = 'UY';
+    case UZ = 'UZ';
+    case VU = 'VU';
+    case VE = 'VE';
+    case VN = 'VN';
+    case VG = 'VG';
+    case VI = 'VI';
+    case WF = 'WF';
+    case EH = 'EH';
+    case YE = 'YE';
+    case ZM = 'ZM';
+    case ZW = 'ZW';
 
     /**
-     * Get the display name with country name and telephone code.
+     * Map of country codes to their calling codes and country names
+     */
+    private const CALLING_CODE_MAP = [
+        'AF' => ['93', 'Afghanistan'],
+        'AX' => ['358', 'Åland Islands'],
+        'AL' => ['355', 'Albania'],
+        'DZ' => ['213', 'Algeria'],
+        'AS' => ['1684', 'American Samoa'],
+        'AD' => ['376', 'Andorra'],
+        'AO' => ['244', 'Angola'],
+        'AI' => ['1264', 'Anguilla'],
+        'AQ' => ['672', 'Antarctica'],
+        'AG' => ['1268', 'Antigua and Barbuda'],
+        'AR' => ['54', 'Argentina'],
+        'AM' => ['374', 'Armenia'],
+        'AW' => ['297', 'Aruba'],
+        'AU' => ['61', 'Australia'],
+        'AT' => ['43', 'Austria'],
+        'AZ' => ['994', 'Azerbaijan'],
+        'BS' => ['1242', 'Bahamas'],
+        'BH' => ['973', 'Bahrain'],
+        'BD' => ['880', 'Bangladesh'],
+        'BB' => ['1246', 'Barbados'],
+        'BY' => ['375', 'Belarus'],
+        'BE' => ['32', 'Belgium'],
+        'BZ' => ['501', 'Belize'],
+        'BJ' => ['229', 'Benin'],
+        'BM' => ['1441', 'Bermuda'],
+        'BT' => ['975', 'Bhutan'],
+        'BO' => ['591', 'Bolivia'],
+        'BQ' => ['599', 'Bonaire, Sint Eustatius and Saba'],
+        'BA' => ['387', 'Bosnia and Herzegovina'],
+        'BW' => ['267', 'Botswana'],
+        'BV' => ['47', 'Bouvet Island'],
+        'BR' => ['55', 'Brazil'],
+        'IO' => ['246', 'British Indian Ocean Territory'],
+        'BN' => ['673', 'Brunei Darussalam'],
+        'BG' => ['359', 'Bulgaria'],
+        'BF' => ['226', 'Burkina Faso'],
+        'BI' => ['257', 'Burundi'],
+        'CV' => ['238', 'Cabo Verde'],
+        'KH' => ['855', 'Cambodia'],
+        'CM' => ['237', 'Cameroon'],
+        'CA' => ['1', 'Canada'],
+        'KY' => ['1345', 'Cayman Islands'],
+        'CF' => ['236', 'Central African Republic'],
+        'TD' => ['235', 'Chad'],
+        'CL' => ['56', 'Chile'],
+        'CN' => ['86', 'China'],
+        'CX' => ['61', 'Christmas Island'],
+        'CC' => ['61', 'Cocos (Keeling) Islands'],
+        'CO' => ['57', 'Colombia'],
+        'KM' => ['269', 'Comoros'],
+        'CG' => ['242', 'Congo'],
+        'CD' => ['243', 'Congo (Democratic Republic of the)'],
+        'CK' => ['682', 'Cook Islands'],
+        'CR' => ['506', 'Costa Rica'],
+        'CI' => ['225', 'Côte d\'Ivoire'],
+        'HR' => ['385', 'Croatia'],
+        'CU' => ['53', 'Cuba'],
+        'CW' => ['599', 'Curaçao'],
+        'CY' => ['357', 'Cyprus'],
+        'CZ' => ['420', 'Czechia'],
+        'DK' => ['45', 'Denmark'],
+        'DJ' => ['253', 'Djibouti'],
+        'DM' => ['1767', 'Dominica'],
+        'DO' => ['1809', 'Dominican Republic'],
+        'EC' => ['593', 'Ecuador'],
+        'EG' => ['20', 'Egypt'],
+        'SV' => ['503', 'El Salvador'],
+        'GQ' => ['240', 'Equatorial Guinea'],
+        'ER' => ['291', 'Eritrea'],
+        'EE' => ['372', 'Estonia'],
+        'SZ' => ['268', 'Eswatini'],
+        'ET' => ['251', 'Ethiopia'],
+        'FK' => ['500', 'Falkland Islands'],
+        'FO' => ['298', 'Faroe Islands'],
+        'FJ' => ['679', 'Fiji'],
+        'FI' => ['358', 'Finland'],
+        'FR' => ['33', 'France'],
+        'GF' => ['594', 'French Guiana'],
+        'PF' => ['689', 'French Polynesia'],
+        'TF' => ['262', 'French Southern Territories'],
+        'GA' => ['241', 'Gabon'],
+        'GM' => ['220', 'Gambia'],
+        'GE' => ['995', 'Georgia'],
+        'DE' => ['49', 'Germany'],
+        'GH' => ['233', 'Ghana'],
+        'GI' => ['350', 'Gibraltar'],
+        'GR' => ['30', 'Greece'],
+        'GL' => ['299', 'Greenland'],
+        'GD' => ['1473', 'Grenada'],
+        'GP' => ['590', 'Guadeloupe'],
+        'GU' => ['1671', 'Guam'],
+        'GT' => ['502', 'Guatemala'],
+        'GG' => ['44', 'Guernsey'],
+        'GN' => ['224', 'Guinea'],
+        'GW' => ['245', 'Guinea-Bissau'],
+        'GY' => ['592', 'Guyana'],
+        'HT' => ['509', 'Haiti'],
+        'HM' => ['672', 'Heard Island and McDonald Islands'],
+        'VA' => ['39', 'Holy See'],
+        'HN' => ['504', 'Honduras'],
+        'HK' => ['852', 'Hong Kong'],
+        'HU' => ['36', 'Hungary'],
+        'IS' => ['354', 'Iceland'],
+        'IN' => ['91', 'India'],
+        'ID' => ['62', 'Indonesia'],
+        'IR' => ['98', 'Iran'],
+        'IQ' => ['964', 'Iraq'],
+        'IE' => ['353', 'Ireland'],
+        'IM' => ['44', 'Isle of Man'],
+        'IL' => ['972', 'Israel'],
+        'IT' => ['39', 'Italy'],
+        'JM' => ['1876', 'Jamaica'],
+        'JP' => ['81', 'Japan'],
+        'JE' => ['44', 'Jersey'],
+        'JO' => ['962', 'Jordan'],
+        'KZ' => ['7', 'Kazakhstan'],
+        'KE' => ['254', 'Kenya'],
+        'KI' => ['686', 'Kiribati'],
+        'KP' => ['850', 'North Korea'],
+        'KR' => ['82', 'South Korea'],
+        'KW' => ['965', 'Kuwait'],
+        'KG' => ['996', 'Kyrgyzstan'],
+        'LA' => ['856', 'Laos'],
+        'LV' => ['371', 'Latvia'],
+        'LB' => ['961', 'Lebanon'],
+        'LS' => ['266', 'Lesotho'],
+        'LR' => ['231', 'Liberia'],
+        'LY' => ['218', 'Libya'],
+        'LI' => ['423', 'Liechtenstein'],
+        'LT' => ['370', 'Lithuania'],
+        'LU' => ['352', 'Luxembourg'],
+        'MO' => ['853', 'Macao'],
+        'MG' => ['261', 'Madagascar'],
+        'MW' => ['265', 'Malawi'],
+        'MY' => ['60', 'Malaysia'],
+        'MV' => ['960', 'Maldives'],
+        'ML' => ['223', 'Mali'],
+        'MT' => ['356', 'Malta'],
+        'MH' => ['692', 'Marshall Islands'],
+        'MQ' => ['596', 'Martinique'],
+        'MR' => ['222', 'Mauritania'],
+        'MU' => ['230', 'Mauritius'],
+        'YT' => ['262', 'Mayotte'],
+        'MX' => ['52', 'Mexico'],
+        'FM' => ['691', 'Micronesia'],
+        'MD' => ['373', 'Moldova'],
+        'MC' => ['377', 'Monaco'],
+        'MN' => ['976', 'Mongolia'],
+        'ME' => ['382', 'Montenegro'],
+        'MS' => ['1664', 'Montserrat'],
+        'MA' => ['212', 'Morocco'],
+        'MZ' => ['258', 'Mozambique'],
+        'MM' => ['95', 'Myanmar'],
+        'NA' => ['264', 'Namibia'],
+        'NR' => ['674', 'Nauru'],
+        'NP' => ['977', 'Nepal'],
+        'NL' => ['31', 'Netherlands'],
+        'NC' => ['687', 'New Caledonia'],
+        'NZ' => ['64', 'New Zealand'],
+        'NI' => ['505', 'Nicaragua'],
+        'NE' => ['227', 'Niger'],
+        'NG' => ['234', 'Nigeria'],
+        'NU' => ['683', 'Niue'],
+        'NF' => ['672', 'Norfolk Island'],
+        'MK' => ['389', 'North Macedonia'],
+        'MP' => ['1670', 'Northern Mariana Islands'],
+        'NO' => ['47', 'Norway'],
+        'OM' => ['968', 'Oman'],
+        'PK' => ['92', 'Pakistan'],
+        'PW' => ['680', 'Palau'],
+        'PS' => ['970', 'Palestine'],
+        'PA' => ['507', 'Panama'],
+        'PG' => ['675', 'Papua New Guinea'],
+        'PY' => ['595', 'Paraguay'],
+        'PE' => ['51', 'Peru'],
+        'PH' => ['63', 'Philippines'],
+        'PN' => ['870', 'Pitcairn'],
+        'PL' => ['48', 'Poland'],
+        'PT' => ['351', 'Portugal'],
+        'PR' => ['1787', 'Puerto Rico'],
+        'QA' => ['974', 'Qatar'],
+        'RE' => ['262', 'Réunion'],
+        'RO' => ['40', 'Romania'],
+        'RU' => ['7', 'Russia'],
+        'RW' => ['250', 'Rwanda'],
+        'BL' => ['590', 'Saint Barthélemy'],
+        'SH' => ['290', 'Saint Helena'],
+        'KN' => ['1869', 'Saint Kitts and Nevis'],
+        'LC' => ['1758', 'Saint Lucia'],
+        'MF' => ['590', 'Saint Martin'],
+        'PM' => ['508', 'Saint Pierre and Miquelon'],
+        'VC' => ['1784', 'Saint Vincent and the Grenadines'],
+        'WS' => ['685', 'Samoa'],
+        'SM' => ['378', 'San Marino'],
+        'ST' => ['239', 'Sao Tome and Principe'],
+        'SA' => ['966', 'Saudi Arabia'],
+        'SN' => ['221', 'Senegal'],
+        'RS' => ['381', 'Serbia'],
+        'SC' => ['248', 'Seychelles'],
+        'SL' => ['232', 'Sierra Leone'],
+        'SG' => ['65', 'Singapore'],
+        'SX' => ['1721', 'Sint Maarten'],
+        'SK' => ['421', 'Slovakia'],
+        'SI' => ['386', 'Slovenia'],
+        'SB' => ['677', 'Solomon Islands'],
+        'SO' => ['252', 'Somalia'],
+        'ZA' => ['27', 'South Africa'],
+        'GS' => ['500', 'South Georgia'],
+        'SS' => ['211', 'South Sudan'],
+        'ES' => ['34', 'Spain'],
+        'LK' => ['94', 'Sri Lanka'],
+        'SD' => ['249', 'Sudan'],
+        'SR' => ['597', 'Suriname'],
+        'SJ' => ['47', 'Svalbard and Jan Mayen'],
+        'SE' => ['46', 'Sweden'],
+        'CH' => ['41', 'Switzerland'],
+        'SY' => ['963', 'Syria'],
+        'TW' => ['886', 'Taiwan'],
+        'TJ' => ['992', 'Tajikistan'],
+        'TZ' => ['255', 'Tanzania'],
+        'TH' => ['66', 'Thailand'],
+        'TL' => ['670', 'Timor-Leste'],
+        'TG' => ['228', 'Togo'],
+        'TK' => ['690', 'Tokelau'],
+        'TO' => ['676', 'Tonga'],
+        'TT' => ['1868', 'Trinidad and Tobago'],
+        'TN' => ['216', 'Tunisia'],
+        'TR' => ['90', 'Turkey'],
+        'TM' => ['993', 'Turkmenistan'],
+        'TC' => ['1649', 'Turks and Caicos Islands'],
+        'TV' => ['688', 'Tuvalu'],
+        'UG' => ['256', 'Uganda'],
+        'UA' => ['380', 'Ukraine'],
+        'AE' => ['971', 'United Arab Emirates'],
+        'GB' => ['44', 'United Kingdom'],
+        'US' => ['1', 'United States'],
+        'UM' => ['1', 'United States Minor Outlying Islands'],
+        'UY' => ['598', 'Uruguay'],
+        'UZ' => ['998', 'Uzbekistan'],
+        'VU' => ['678', 'Vanuatu'],
+        'VE' => ['58', 'Venezuela'],
+        'VN' => ['84', 'Viet Nam'],
+        'VG' => ['1284', 'Virgin Islands (British)'],
+        'VI' => ['1340', 'Virgin Islands (U.S.)'],
+        'WF' => ['681', 'Wallis and Futuna'],
+        'EH' => ['212', 'Western Sahara'],
+        'YE' => ['967', 'Yemen'],
+        'ZM' => ['260', 'Zambia'],
+        'ZW' => ['263', 'Zimbabwe'],
+    ];
+
+    /**
+     * Get the calling code for this country
+     */
+    public function getCallingCode(): string
+    {
+        return self::CALLING_CODE_MAP[$this->value][0];
+    }
+
+    /**
+     * Get the country name
+     */
+    public function getCountryName(): string
+    {
+        return self::CALLING_CODE_MAP[$this->value][1];
+    }
+
+    /**
+     * Get the display name with country name and telephone code
      */
     public function getDisplayName(): string
     {
-        return match ($this) {
-            self::AF => 'Afghanistan (+93)',
-            self::AX => 'Åland Islands (+358)',
-            self::AL => 'Albania (+355)',
-            self::DZ => 'Algeria (+213)',
-            self::AS => 'American Samoa (+1684)',
-            self::AD => 'Andorra (+376)',
-            self::AO => 'Angola (+244)',
-            self::AI => 'Anguilla (+1264)',
-            self::AQ => 'Antarctica (+672)',
-            self::AG => 'Antigua and Barbuda (+1268)',
-            self::AR => 'Argentina (+54)',
-            self::AM => 'Armenia (+374)',
-            self::AW => 'Aruba (+297)',
-            self::AU => 'Australia (+61)',
-            self::AT => 'Austria (+43)',
-            self::AZ => 'Azerbaijan (+994)',
-            self::BS => 'Bahamas (+1242)',
-            self::BH => 'Bahrain (+973)',
-            self::BD => 'Bangladesh (+880)',
-            self::BB => 'Barbados (+1246)',
-            self::BY => 'Belarus (+375)',
-            self::BE => 'Belgium (+32)',
-            self::BZ => 'Belize (+501)',
-            self::BJ => 'Benin (+229)',
-            self::BM => 'Bermuda (+1441)',
-            self::BT => 'Bhutan (+975)',
-            self::BO => 'Bolivia (+591)',
-            self::BQ => 'Bonaire, Sint Eustatius and Saba (+599)',
-            self::BA => 'Bosnia and Herzegovina (+387)',
-            self::BW => 'Botswana (+267)',
-            self::BV => 'Bouvet Island (+47)',
-            self::BR => 'Brazil (+55)',
-            self::IO => 'British Indian Ocean Territory (+246)',
-            self::BN => 'Brunei Darussalam (+673)',
-            self::BG => 'Bulgaria (+359)',
-            self::BF => 'Burkina Faso (+226)',
-            self::BI => 'Burundi (+257)',
-            self::CV => 'Cabo Verde (+238)',
-            self::KH => 'Cambodia (+855)',
-            self::CM => 'Cameroon (+237)',
-            self::CA => 'Canada (+1)',
-            self::KY => 'Cayman Islands (+1345)',
-            self::CF => 'Central African Republic (+236)',
-            self::TD => 'Chad (+235)',
-            self::CL => 'Chile (+56)',
-            self::CN => 'China (+86)',
-            self::CX => 'Christmas Island (+61)',
-            self::CC => 'Cocos (Keeling) Islands (+61)',
-            self::CO => 'Colombia (+57)',
-            self::KM => 'Comoros (+269)',
-            self::CG => 'Congo (+242)',
-            self::CD => 'Congo (Democratic Republic of the) (+243)',
-            self::CK => 'Cook Islands (+682)',
-            self::CR => 'Costa Rica (+506)',
-            self::CI => 'Côte d\'Ivoire (+225)',
-            self::HR => 'Croatia (+385)',
-            self::CU => 'Cuba (+53)',
-            self::CW => 'Curaçao (+599)',
-            self::CY => 'Cyprus (+357)',
-            self::CZ => 'Czechia (+420)',
-            self::DK => 'Denmark (+45)',
-            self::DJ => 'Djibouti (+253)',
-            self::DM => 'Dominica (+1767)',
-            self::DO => 'Dominican Republic (+1809)',
-            self::EC => 'Ecuador (+593)',
-            self::EG => 'Egypt (+20)',
-            self::SV => 'El Salvador (+503)',
-            self::GQ => 'Equatorial Guinea (+240)',
-            self::ER => 'Eritrea (+291)',
-            self::EE => 'Estonia (+372)',
-            self::SZ => 'Eswatini (+268)',
-            self::ET => 'Ethiopia (+251)',
-            self::FK => 'Falkland Islands (+500)',
-            self::FO => 'Faroe Islands (+298)',
-            self::FJ => 'Fiji (+679)',
-            self::FI => 'Finland (+358)',
-            self::FR => 'France (+33)',
-            self::GF => 'French Guiana (+594)',
-            self::PF => 'French Polynesia (+689)',
-            self::TF => 'French Southern Territories (+262)',
-            self::GA => 'Gabon (+241)',
-            self::GM => 'Gambia (+220)',
-            self::GE => 'Georgia (+995)',
-            self::DE => 'Germany (+49)',
-            self::GH => 'Ghana (+233)',
-            self::GI => 'Gibraltar (+350)',
-            self::GR => 'Greece (+30)',
-            self::GL => 'Greenland (+299)',
-            self::GD => 'Grenada (+1473)',
-            self::GP => 'Guadeloupe (+590)',
-            self::GU => 'Guam (+1671)',
-            self::GT => 'Guatemala (+502)',
-            self::GG => 'Guernsey (+44)',
-            self::GN => 'Guinea (+224)',
-            self::GW => 'Guinea-Bissau (+245)',
-            self::GY => 'Guyana (+592)',
-            self::HT => 'Haiti (+509)',
-            self::HM => 'Heard Island and McDonald Islands (+672)',
-            self::VA => 'Holy See (+39)',
-            self::HN => 'Honduras (+504)',
-            self::HK => 'Hong Kong (+852)',
-            self::HU => 'Hungary (+36)',
-            self::IS => 'Iceland (+354)',
-            self::IN => 'India (+91)',
-            self::ID => 'Indonesia (+62)',
-            self::IR => 'Iran (+98)',
-            self::IQ => 'Iraq (+964)',
-            self::IE => 'Ireland (+353)',
-            self::IM => 'Isle of Man (+44)',
-            self::IL => 'Israel (+972)',
-            self::IT => 'Italy (+39)',
-            self::JM => 'Jamaica (+1876)',
-            self::JP => 'Japan (+81)',
-            self::JE => 'Jersey (+44)',
-            self::JO => 'Jordan (+962)',
-            self::KZ => 'Kazakhstan (+7)',
-            self::KE => 'Kenya (+254)',
-            self::KI => 'Kiribati (+686)',
-            self::KP => 'North Korea (+850)',
-            self::KR => 'South Korea (+82)',
-            self::KW => 'Kuwait (+965)',
-            self::KG => 'Kyrgyzstan (+996)',
-            self::LA => 'Laos (+856)',
-            self::LV => 'Latvia (+371)',
-            self::LB => 'Lebanon (+961)',
-            self::LS => 'Lesotho (+266)',
-            self::LR => 'Liberia (+231)',
-            self::LY => 'Libya (+218)',
-            self::LI => 'Liechtenstein (+423)',
-            self::LT => 'Lithuania (+370)',
-            self::LU => 'Luxembourg (+352)',
-            self::MO => 'Macao (+853)',
-            self::MG => 'Madagascar (+261)',
-            self::MW => 'Malawi (+265)',
-            self::MY => 'Malaysia (+60)',
-            self::MV => 'Maldives (+960)',
-            self::ML => 'Mali (+223)',
-            self::MT => 'Malta (+356)',
-            self::MH => 'Marshall Islands (+692)',
-            self::MQ => 'Martinique (+596)',
-            self::MR => 'Mauritania (+222)',
-            self::MU => 'Mauritius (+230)',
-            self::YT => 'Mayotte (+262)',
-            self::MX => 'Mexico (+52)',
-            self::FM => 'Micronesia (+691)',
-            self::MD => 'Moldova (+373)',
-            self::MC => 'Monaco (+377)',
-            self::MN => 'Mongolia (+976)',
-            self::ME => 'Montenegro (+382)',
-            self::MS => 'Montserrat (+1664)',
-            self::MA => 'Morocco (+212)',
-            self::MZ => 'Mozambique (+258)',
-            self::MM => 'Myanmar (+95)',
-            self::NA => 'Namibia (+264)',
-            self::NR => 'Nauru (+674)',
-            self::NP => 'Nepal (+977)',
-            self::NL => 'Netherlands (+31)',
-            self::NC => 'New Caledonia (+687)',
-            self::NZ => 'New Zealand (+64)',
-            self::NI => 'Nicaragua (+505)',
-            self::NE => 'Niger (+227)',
-            self::NG => 'Nigeria (+234)',
-            self::NU => 'Niue (+683)',
-            self::NF => 'Norfolk Island (+672)',
-            self::MK => 'North Macedonia (+389)',
-            self::MP => 'Northern Mariana Islands (+1670)',
-            self::NO => 'Norway (+47)',
-            self::OM => 'Oman (+968)',
-            self::PK => 'Pakistan (+92)',
-            self::PW => 'Palau (+680)',
-            self::PS => 'Palestine (+970)',
-            self::PA => 'Panama (+507)',
-            self::PG => 'Papua New Guinea (+675)',
-            self::PY => 'Paraguay (+595)',
-            self::PE => 'Peru (+51)',
-            self::PH => 'Philippines (+63)',
-            self::PN => 'Pitcairn (+870)',
-            self::PL => 'Poland (+48)',
-            self::PT => 'Portugal (+351)',
-            self::PR => 'Puerto Rico (+1787)',
-            self::QA => 'Qatar (+974)',
-            self::RE => 'Réunion (+262)',
-            self::RO => 'Romania (+40)',
-            self::RU => 'Russia (+7)',
-            self::RW => 'Rwanda (+250)',
-            self::BL => 'Saint Barthélemy (+590)',
-            self::SH => 'Saint Helena (+290)',
-            self::KN => 'Saint Kitts and Nevis (+1869)',
-            self::LC => 'Saint Lucia (+1758)',
-            self::MF => 'Saint Martin (+590)',
-            self::PM => 'Saint Pierre and Miquelon (+508)',
-            self::VC => 'Saint Vincent and the Grenadines (+1784)',
-            self::WS => 'Samoa (+685)',
-            self::SM => 'San Marino (+378)',
-            self::ST => 'Sao Tome and Principe (+239)',
-            self::SA => 'Saudi Arabia (+966)',
-            self::SN => 'Senegal (+221)',
-            self::RS => 'Serbia (+381)',
-            self::SC => 'Seychelles (+248)',
-            self::SL => 'Sierra Leone (+232)',
-            self::SG => 'Singapore (+65)',
-            self::SX => 'Sint Maarten (+1721)',
-            self::SK => 'Slovakia (+421)',
-            self::SI => 'Slovenia (+386)',
-            self::SB => 'Solomon Islands (+677)',
-            self::SO => 'Somalia (+252)',
-            self::ZA => 'South Africa (+27)',
-            self::GS => 'South Georgia (+500)',
-            self::SS => 'South Sudan (+211)',
-            self::ES => 'Spain (+34)',
-            self::LK => 'Sri Lanka (+94)',
-            self::SD => 'Sudan (+249)',
-            self::SR => 'Suriname (+597)',
-            self::SJ => 'Svalbard and Jan Mayen (+47)',
-            self::SE => 'Sweden (+46)',
-            self::CH => 'Switzerland (+41)',
-            self::SY => 'Syria (+963)',
-            self::TW => 'Taiwan (+886)',
-            self::TJ => 'Tajikistan (+992)',
-            self::TZ => 'Tanzania (+255)',
-            self::TH => 'Thailand (+66)',
-            self::TL => 'Timor-Leste (+670)',
-            self::TG => 'Togo (+228)',
-            self::TK => 'Tokelau (+690)',
-            self::TO => 'Tonga (+676)',
-            self::TT => 'Trinidad and Tobago (+1868)',
-            self::TN => 'Tunisia (+216)',
-            self::TR => 'Turkey (+90)',
-            self::TM => 'Turkmenistan (+993)',
-            self::TC => 'Turks and Caicos Islands (+1649)',
-            self::TV => 'Tuvalu (+688)',
-            self::UG => 'Uganda (+256)',
-            self::UA => 'Ukraine (+380)',
-            self::AE => 'United Arab Emirates (+971)',
-            self::GB => 'United Kingdom (+44)',
-            self::US => 'United States (+1)',
-            self::UM => 'United States Minor Outlying Islands (+1)',
-            self::UY => 'Uruguay (+598)',
-            self::UZ => 'Uzbekistan (+998)',
-            self::VU => 'Vanuatu (+678)',
-            self::VE => 'Venezuela (+58)',
-            self::VN => 'Viet Nam (+84)',
-            self::VG => 'Virgin Islands (British) (+1284)',
-            self::VI => 'Virgin Islands (U.S.) (+1340)',
-            self::WF => 'Wallis and Futuna (+681)',
-            self::EH => 'Western Sahara (+212)',
-            self::YE => 'Yemen (+967)',
-            self::ZM => 'Zambia (+260)',
-            self::ZW => 'Zimbabwe (+263)',
-        };
+        return $this->getCountryName().' (+'.$this->getCallingCode().')';
+    }
+
+    /**
+     * Try to get the enum case from a country code (ISO 3166-1 alpha-2)
+     */
+    public static function tryFromName(string $name): ?self
+    {
+        return self::tryFrom($name);
+    }
+
+    /**
+     * Get all countries that share the same calling code
+     *
+     * @return array<self>
+     */
+    public static function getCountriesByCallingCode(string $callingCode): array
+    {
+        return array_values(array_filter(
+            self::cases(),
+            fn (self $case) => $case->getCallingCode() === $callingCode
+        ));
+    }
+
+    /**
+     * Get all countries grouped by calling code
+     *
+     * @return array<string, array<self>>
+     */
+    public static function getCountriesGroupedByCallingCode(): array
+    {
+        $groups = [];
+        foreach (self::cases() as $case) {
+            $code = $case->getCallingCode();
+            if (! isset($groups[$code])) {
+                $groups[$code] = [];
+            }
+            $groups[$code][] = $case;
+        }
+
+        return $groups;
+    }
+
+    /**
+     * Check if a country code exists
+     */
+    public static function isValidCountryCode(string $code): bool
+    {
+        return isset(self::CALLING_CODE_MAP[$code]);
+    }
+
+    /**
+     * Get all country codes
+     *
+     * @return array<string>
+     */
+    public static function getCountryCodes(): array
+    {
+        return array_keys(self::CALLING_CODE_MAP);
+    }
+
+    /**
+     * Get all calling codes (unique values)
+     *
+     * @return array<string>
+     */
+    public static function getUniqueCallingCodes(): array
+    {
+        return array_values(array_unique(array_column(self::CALLING_CODE_MAP, 0)));
     }
 }
