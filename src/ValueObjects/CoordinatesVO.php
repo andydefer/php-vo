@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace AndyDefer\PhpVo\ValueObjects;
 
 use AndyDefer\DomainStructures\Abstracts\AbstractValueObject;
+use AndyDefer\DomainStructures\Utils\StrictAssociative;
 use AndyDefer\PhpVo\Configs\CoordinatesConfig;
 use AndyDefer\PhpVo\Contracts\CoordinatesConfigInterface;
 use AndyDefer\PhpVo\Enums\SpaceTimeUnit;
-use AndyDefer\PhpVo\Records\CoordinatesRecord;
 use AndyDefer\PhpVo\ValueObjects\Types\BoolVO;
 use AndyDefer\PhpVo\ValueObjects\Types\FloatVO;
 use AndyDefer\PhpVo\ValueObjects\Types\StringVO;
@@ -177,22 +177,22 @@ final class CoordinatesVO extends AbstractValueObject
     /**
      * Returns the coordinates as a record.
      */
-    public function getValue(): CoordinatesRecord
+    public function getValue(): StrictAssociative
     {
-        return new CoordinatesRecord(
-            latitude: $this->latitude->getValue(),
-            longitude: $this->longitude->getValue(),
-        );
+        return StrictAssociative::from([
+            'latitude' => $this->latitude->getValue(),
+            'longitude' => $this->longitude->getValue(),
+        ]);
     }
 
     /**
      * Calculates the distance to another coordinate.
      *
-     * @param  self|CoordinatesRecord|array<string, float>|string  $other  The target coordinates
+     * @param  self  $other  The target coordinates
      * @param  SpaceTimeUnit  $unit  Unit of measurement (Kilometre or Metre)
      * @return FloatVO Distance in the specified unit (rounded to 2 decimals)
      */
-    public function distanceTo(mixed $other, SpaceTimeUnit $unit = SpaceTimeUnit::KILOMETRE): FloatVO
+    public function distanceTo(self $other, SpaceTimeUnit $unit = SpaceTimeUnit::KILOMETRE): FloatVO
     {
         $target = self::from($other);
 
@@ -221,11 +221,11 @@ final class CoordinatesVO extends AbstractValueObject
     /**
      * Checks if two coordinates are at the same location within tolerance.
      *
-     * @param  self|CoordinatesRecord|array<string, float>|string  $other  The coordinates to compare
+     * @param  self  $other  The coordinates to compare
      * @param  float|null  $tolerance  Tolerance for comparison (default: 0.0001)
      * @return BoolVO True if coordinates are within tolerance
      */
-    public function isSameLocation(mixed $other, ?float $tolerance = null): BoolVO
+    public function isSameLocation(CoordinatesVO $other, ?float $tolerance = null): BoolVO
     {
         $target = self::from($other);
         $tolerance = FloatVO::from($tolerance ?? self::DEFAULT_TOLERANCE);

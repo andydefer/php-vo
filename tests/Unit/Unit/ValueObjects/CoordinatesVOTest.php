@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace AndyDefer\PhpVo\Tests\Unit\ValueObjects;
 
 use AndyDefer\PhpVo\Enums\SpaceTimeUnit;
-use AndyDefer\PhpVo\Records\CoordinatesRecord;
 use AndyDefer\PhpVo\ValueObjects\CoordinatesVO;
 use AndyDefer\PhpVo\ValueObjects\Types\BoolVO;
 use AndyDefer\PhpVo\ValueObjects\Types\FloatVO;
@@ -151,7 +150,7 @@ final class CoordinatesVOTest extends TestCase
     {
         $paris = CoordinatesVO::from(self::PARIS_COORDINATES);
 
-        $distance = $paris->distanceTo(self::LONDON_COORDINATES);
+        $distance = $paris->distanceTo(CoordinatesVO::from(self::LONDON_COORDINATES));
 
         $this->assertGreaterThan(340, $distance->getValue());
         $this->assertLessThan(350, $distance->getValue());
@@ -289,7 +288,6 @@ final class CoordinatesVOTest extends TestCase
         $coords = CoordinatesVO::from(self::PARIS_COORDINATES);
         $record = $coords->getValue();
 
-        $this->assertInstanceOf(CoordinatesRecord::class, $record);
         $this->assertSame(48.8566, $record->latitude);
         $this->assertSame(2.3522, $record->longitude);
     }
@@ -332,8 +330,8 @@ final class CoordinatesVOTest extends TestCase
     public function test_immutability(): void
     {
         $original = CoordinatesVO::from(self::PARIS_COORDINATES);
-        $original->distanceTo(self::LONDON_COORDINATES);
-        $original->isSameLocation(self::LONDON_COORDINATES);
+        $original->distanceTo(CoordinatesVO::from(self::LONDON_COORDINATES));
+        $original->isSameLocation(CoordinatesVO::from(self::LONDON_COORDINATES));
 
         $this->assertSame(48.8566, $original->getLatitude()->getValue());
         $this->assertSame(2.3522, $original->getLongitude()->getValue());

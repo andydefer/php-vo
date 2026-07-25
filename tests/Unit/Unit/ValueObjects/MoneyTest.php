@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace AndyDefer\PhpVo\Tests\Unit\ValueObjects;
 
 use AndyDefer\PhpVo\Enums\Currency;
-use AndyDefer\PhpVo\Records\MoneyRecord;
 use AndyDefer\PhpVo\ValueObjects\AmountVO;
 use AndyDefer\PhpVo\ValueObjects\MoneyVO;
 use InvalidArgumentException;
@@ -46,7 +45,6 @@ final class MoneyTest extends TestCase
         $money = new MoneyVO($amount, Currency::EUR);
         $record = $money->getValue();
 
-        $this->assertInstanceOf(MoneyRecord::class, $record);
         $this->assertSame(99.99, $record->amount->getValue());
         $this->assertSame(Currency::EUR, $record->currency);
     }

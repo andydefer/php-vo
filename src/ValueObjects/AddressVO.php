@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace AndyDefer\PhpVo\ValueObjects;
 
 use AndyDefer\DomainStructures\Abstracts\AbstractValueObject;
-use AndyDefer\PhpVo\Records\AddressRecord;
+use AndyDefer\DomainStructures\Utils\StrictAssociative;
 use InvalidArgumentException;
 
 /**
@@ -39,17 +39,17 @@ class AddressVO extends AbstractValueObject
     /**
      * Returns the address as a data record.
      *
-     * @return AddressRecord The address converted to a Record structure
+     * @return StrictAssociative The address converted to a Record structure
      */
-    public function getValue(): AddressRecord
+    public function getValue(): StrictAssociative
     {
-        return new AddressRecord(
-            street: $this->street,
-            city: $this->city,
-            postalCode: $this->postalCode,
-            country: $this->country,
-            coordinates: $this->coordinates?->getValue(),
-        );
+        return StrictAssociative::from([
+            'street' => $this->street,
+            'city' => $this->city,
+            'postal_code' => $this->postalCode,
+            'country' => $this->country,
+            'coordinates' => $this->coordinates?->getValue(),
+        ]);
     }
 
     /**

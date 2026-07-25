@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace AndyDefer\PhpVo\ValueObjects;
 
 use AndyDefer\DomainStructures\Abstracts\AbstractValueObject;
+use AndyDefer\DomainStructures\Utils\StrictAssociative;
 use AndyDefer\PhpVo\Enums\CallingCode;
 use AndyDefer\PhpVo\Records\PhoneNumberRecord;
 use InvalidArgumentException;
@@ -74,14 +75,14 @@ final class PhoneNumberVO extends AbstractValueObject
     /**
      * Returns the phone number as a data record.
      *
-     * @return PhoneNumberRecord The phone number converted to a Record structure
+     * @return StrictAssociative The phone number converted to a Record structure
      */
-    public function getValue(): PhoneNumberRecord
+    public function getValue(): StrictAssociative
     {
-        return new PhoneNumberRecord(
-            callingCode: $this->callingCode,
-            number: $this->number
-        );
+        return StrictAssociative::from([
+            'calling_code' => $this->callingCode,
+            'number' => $this->number,
+        ]);
     }
 
     /**

@@ -13,7 +13,7 @@ use AndyDefer\PhpVo\Enums\CallingCode;
 final class PhoneNumberRecord extends AbstractRecord
 {
     public function __construct(
-        public readonly CallingCode $callingCode,
+        public readonly CallingCode $calling_code,
         public readonly string $number,
     ) {}
 }

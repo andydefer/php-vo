@@ -12,7 +12,7 @@ final class AddressRecord extends AbstractRecord
     public function __construct(
         public readonly string $street,
         public readonly string $city,
-        public readonly PostalCodeVO $postalCode,
+        public readonly PostalCodeVO $postal_code,
         public readonly string $country,
         public readonly ?CoordinatesRecord $coordinates = null,
     ) {}

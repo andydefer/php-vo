@@ -15,7 +15,7 @@ use AndyDefer\PhpVo\ValueObjects\AmountVO;
 final class MoneyRecord extends AbstractRecord
 {
     /**
-     * @param  Amount  $amount  The monetary amount
+     * @param  AmountVO  $amount  The monetary amount
      * @param  Currency  $currency  The currency of the amount
      */
     public function __construct(

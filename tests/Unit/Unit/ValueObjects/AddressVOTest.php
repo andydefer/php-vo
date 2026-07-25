@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace AndyDefer\PhpVo\Tests\Unit\ValueObjects;
 
-use AndyDefer\PhpVo\Records\AddressRecord;
 use AndyDefer\PhpVo\ValueObjects\AddressVO;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
@@ -215,10 +214,9 @@ final class AddressVOTest extends TestCase
         $record = $address->getValue();
 
         // Assert: Returns proper Record instance with same data
-        $this->assertInstanceOf(AddressRecord::class, $record);
         $this->assertSame('123 Main St', $record->street);
         $this->assertSame('Paris', $record->city);
-        $this->assertSame('75001', $record->postalCode->getValue());
+        $this->assertSame('75001', $record->postal_code->getValue());
         $this->assertSame('France', $record->country);
         $this->assertNull($record->coordinates);
     }
@@ -238,10 +236,9 @@ final class AddressVOTest extends TestCase
         $record = $address->getValue();
 
         // Assert: Returns proper Record instance with coordinates
-        $this->assertInstanceOf(AddressRecord::class, $record);
         $this->assertSame('123 Main St', $record->street);
         $this->assertSame('Paris', $record->city);
-        $this->assertSame('75001', $record->postalCode->getValue());
+        $this->assertSame('75001', $record->postal_code->getValue());
         $this->assertSame('France', $record->country);
         $this->assertNotNull($record->coordinates);
         $this->assertSame(48.8566, $record->coordinates->latitude);

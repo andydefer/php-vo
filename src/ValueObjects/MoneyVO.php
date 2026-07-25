@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace AndyDefer\PhpVo\ValueObjects;
 
 use AndyDefer\DomainStructures\Abstracts\AbstractValueObject;
+use AndyDefer\DomainStructures\Utils\StrictAssociative;
 use AndyDefer\PhpVo\Enums\Currency;
-use AndyDefer\PhpVo\Records\MoneyRecord;
 use InvalidArgumentException;
 
 final class MoneyVO extends AbstractValueObject
@@ -20,9 +20,12 @@ final class MoneyVO extends AbstractValueObject
         }
     }
 
-    public function getValue(): MoneyRecord
+    public function getValue(): StrictAssociative
     {
-        return new MoneyRecord($this->amount, $this->currency);
+        return StrictAssociative::from([
+            'amount' => $this->amount,
+            'currency' => $this->currency,
+        ]);
     }
 
     public function addVat(float|int|string $rate): self
