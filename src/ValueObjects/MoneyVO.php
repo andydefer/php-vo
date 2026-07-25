@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace AndyDefer\PhpVo\ValueObjects;
 
 use AndyDefer\DomainStructures\Abstracts\AbstractValueObject;
-use AndyDefer\DomainStructures\Utils\StrictAssociative;
+use AndyDefer\DomainStructures\Utils\Associative;
 use AndyDefer\PhpVo\Enums\Currency;
 use InvalidArgumentException;
 
@@ -20,9 +20,9 @@ final class MoneyVO extends AbstractValueObject
         }
     }
 
-    public function getValue(): StrictAssociative
+    public function getValue(): Associative
     {
-        return StrictAssociative::from([
+        return Associative::from([
             'amount' => $this->amount,
             'currency' => $this->currency,
         ]);

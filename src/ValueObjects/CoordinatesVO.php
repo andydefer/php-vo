@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace AndyDefer\PhpVo\ValueObjects;
 
 use AndyDefer\DomainStructures\Abstracts\AbstractValueObject;
-use AndyDefer\DomainStructures\Utils\StrictAssociative;
+use AndyDefer\DomainStructures\Utils\Associative;
 use AndyDefer\PhpVo\Configs\CoordinatesConfig;
 use AndyDefer\PhpVo\Contracts\CoordinatesConfigInterface;
 use AndyDefer\PhpVo\Enums\SpaceTimeUnit;
@@ -177,9 +177,9 @@ final class CoordinatesVO extends AbstractValueObject
     /**
      * Returns the coordinates as a record.
      */
-    public function getValue(): StrictAssociative
+    public function getValue(): Associative
     {
-        return StrictAssociative::from([
+        return Associative::from([
             'latitude' => $this->latitude->getValue(),
             'longitude' => $this->longitude->getValue(),
         ]);
