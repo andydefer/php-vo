@@ -13,7 +13,7 @@ use DateTimeZone;
 use InvalidArgumentException;
 
 /**
- * Immutable Value Object representing an ISO 8601 datetime.
+ * Immutable Value Object representing a datetime.
  *
  * This class provides a type-safe, immutable wrapper around Carbon/CarbonInterface
  * with full support for timezone conversions, date arithmetic, and formatting.
@@ -28,7 +28,7 @@ use InvalidArgumentException;
  *
  * @example
  * $date = DateTimeVO::from('2024-01-15T14:30:00+01:00');
- * echo $date->getValue(); // '2024-01-15T14:30:00+01:00'
+ * echo $date->getValue(); // '2024-01-15 14:30:00'
  *
  * $tomorrow = $date->addDays(1);
  * echo $tomorrow->toDateString(); // '2024-01-16'
@@ -52,7 +52,7 @@ final class DateTimeVO extends AbstractValueObject
     /**
      * Creates a new DateTimeVO instance.
      *
-     * @param  string|null  $value  ISO 8601 datetime string, or null for current time
+     * @param  string|null  $value  Datetime string, or null for current time
      *
      * @throws InvalidArgumentException If the datetime string is invalid
      */
@@ -227,8 +227,6 @@ final class DateTimeVO extends AbstractValueObject
     /**
      * Returns the underlying Carbon instance.
      *
-     * This method is intended for advanced use cases where direct Carbon access is needed.
-     *
      * @return CarbonInterface The internal Carbon instance
      */
     public function getCarbon(): CarbonInterface
@@ -237,11 +235,21 @@ final class DateTimeVO extends AbstractValueObject
     }
 
     /**
+     * Gets the database string representation (Y-m-d H:i:s in UTC).
+     *
+     * @return string The datetime as a database string
+     */
+    public function getValue(): string
+    {
+        return $this->carbon->copy()->utc()->format(self::DATABASE_FORMAT);
+    }
+
+    /**
      * Gets the ISO 8601 string representation.
      *
      * @return string The ISO 8601 datetime string
      */
-    public function getValue(): string
+    public function toIso8601String(): string
     {
         return $this->carbon->format(self::ISO8601_FORMAT);
     }
@@ -834,9 +842,9 @@ final class DateTimeVO extends AbstractValueObject
     }
 
     /**
-     * Magic method to get the ISO 8601 string representation.
+     * Magic method to get the database string representation.
      *
-     * @return string The ISO 8601 datetime string
+     * @return string The datetime as a database string
      */
     public function __toString(): string
     {
