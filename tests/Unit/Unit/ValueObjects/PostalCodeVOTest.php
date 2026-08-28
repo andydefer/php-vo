@@ -14,69 +14,73 @@ final class PostalCodeVOTest extends UnitTestCase
 {
     public function test_create_valid_postal_code(): void
     {
-        $postalCode = PostalCodeVO::from('75001');
+        $postalCode = new PostalCodeVO('75001');
 
         $this->assertSame('75001', $postalCode->getValue());
     }
 
-    public function test_create_postal_code_with_spaces_is_trimmed(): void
+    public function test_create_postal_code_with_10_characters(): void
     {
-        $postalCode = PostalCodeVO::from(' 75001 ');
+        $postalCode = new PostalCodeVO('ABC-123-DE');
 
-        $this->assertSame('75001', $postalCode->getValue());
+        $this->assertSame('ABC-123-DE', $postalCode->getValue());
     }
 
-    public function test_create_postal_code_with_letters_throws_exception(): void
+    public function test_create_postal_code_with_spaces(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid postal code format: "ABCDE". Must be 5 digits.');
+        $postalCode = new PostalCodeVO('75001 123');
 
-        PostalCodeVO::from('ABCDE');
+        $this->assertSame('75001 123', $postalCode->getValue());
     }
 
-    public function test_create_postal_code_with_4_digits_throws_exception(): void
+    public function test_create_postal_code_with_11_characters_throws_exception(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid postal code format: "7500". Must be 5 digits.');
+        $this->expectExceptionMessage('Maximum 10 characters allowed');
 
-        PostalCodeVO::from('7500');
+        new PostalCodeVO('12345678901');
     }
 
-    public function test_create_postal_code_with_6_digits_throws_exception(): void
+    public function test_create_postal_code_with_special_characters_throws_exception(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid postal code format: "750001". Must be 5 digits.');
+        $this->expectExceptionMessage('Only alphanumeric characters, spaces and hyphens are allowed');
 
-        PostalCodeVO::from('750001');
+        new PostalCodeVO('75001!@#');
     }
 
-    public function test_create_postal_code_from_integer_throws_exception(): void
+    public function test_create_postal_code_with_letters_is_valid(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Postal code must be a string');
+        $postalCode = new PostalCodeVO('ABC12');
 
-        PostalCodeVO::from(75001);
+        $this->assertSame('ABC12', $postalCode->getValue());
     }
 
-    public function test_create_postal_code_from_array_throws_exception(): void
+    public function test_create_postal_code_with_hyphens_is_valid(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Postal code must be a string');
+        $postalCode = new PostalCodeVO('ABC-123');
 
-        PostalCodeVO::from(['75001']);
+        $this->assertSame('ABC-123', $postalCode->getValue());
     }
 
-    public function test_create_postal_code_from_null_throws_exception(): void
+    public function test_create_postal_code_with_alphanumeric_and_hyphen_is_valid(): void
+    {
+        $postalCode = new PostalCodeVO('A1B-2C3');
+
+        $this->assertSame('A1B-2C3', $postalCode->getValue());
+    }
+
+    public function test_create_postal_code_with_empty_string_throws_exception(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Postal code must be a string');
+        $this->expectExceptionMessage('Only alphanumeric characters, spaces and hyphens are allowed');
 
-        PostalCodeVO::from(null);
+        new PostalCodeVO('');
     }
 
     public function test_create_postal_code_from_existing_postal_code_returns_same_instance(): void
     {
-        $original = PostalCodeVO::from('75001');
+        $original = new PostalCodeVO('75001');
         $duplicate = PostalCodeVO::from($original);
 
         $this->assertSame($original, $duplicate);
