@@ -6,6 +6,7 @@ namespace AndyDefer\PhpVo\Tests\Unit\ValueObjects;
 
 use AndyDefer\PhpVo\Enums\SpaceTimeUnit;
 use AndyDefer\PhpVo\ValueObjects\CoordinatesVO;
+use AndyDefer\PhpVo\ValueObjects\LocationVO;
 use AndyDefer\PhpVo\ValueObjects\Types\BoolVO;
 use AndyDefer\PhpVo\ValueObjects\Types\FloatVO;
 use AndyDefer\PhpVo\ValueObjects\Types\StringVO;
@@ -188,25 +189,23 @@ final class CoordinatesVOTest extends TestCase
 
     public function test_is_same_location_with_mixed_tolerance(): void
     {
-        // Arrange
         $point1 = CoordinatesVO::from(self::PARIS_COORDINATES);
         $point2 = CoordinatesVO::from([
             'latitude' => 48.8567,
             'longitude' => 2.3523,
         ]);
 
-        // Act & Assert - With float tolerance
         $this->assertTrue(
             $point1->isSameLocation($point2, 0.0002)->getValue(),
             'Should be true with tolerance 0.0002'
         );
 
-        // Act & Assert - With smaller float tolerance
         $this->assertFalse(
             $point1->isSameLocation($point2, 0.00001)->getValue(),
             'Should be false with tolerance 0.00001'
         );
     }
+
     // ========== TESTS DE FORMATAGE ==========
 
     public function test_format_returns_formatted_coordinates(): void
@@ -290,6 +289,58 @@ final class CoordinatesVOTest extends TestCase
 
         $this->assertSame(48.8566, $record->latitude);
         $this->assertSame(2.3522, $record->longitude);
+    }
+
+    // ========== TESTS DE CONVERSION ==========
+
+    public function test_to_location_returns_location_vo(): void
+    {
+        $coords = CoordinatesVO::from(self::PARIS_COORDINATES);
+
+        $location = $coords->toLocation();
+
+        $this->assertInstanceOf(LocationVO::class, $location);
+        $this->assertSame(2.3522, $location->getLongitude());
+        $this->assertSame(48.8566, $location->getLatitude());
+    }
+
+    public function test_to_location_preserves_negative_coordinates(): void
+    {
+        $coords = CoordinatesVO::from(self::NEW_YORK_COORDINATES);
+
+        $location = $coords->toLocation();
+
+        $this->assertSame(-74.0060, $location->getLongitude());
+        $this->assertSame(40.7128, $location->getLatitude());
+    }
+
+    public function test_to_coordinates_returns_new_instance_with_same_values(): void
+    {
+        $coords = CoordinatesVO::from(self::PARIS_COORDINATES);
+
+        $copy = $coords->toCoordinates();
+
+        $this->assertInstanceOf(CoordinatesVO::class, $copy);
+        $this->assertNotSame($coords, $copy);
+        $this->assertSame(48.8566, $copy->getLatitude()->getValue());
+        $this->assertSame(2.3522, $copy->getLongitude()->getValue());
+        $this->assertTrue($coords->equals($copy));
+    }
+
+    public function test_round_trip_coordinates_to_location_to_coordinates(): void
+    {
+        $original = CoordinatesVO::from(self::PARIS_COORDINATES);
+
+        $restored = $original->toLocation()->toCoordinates();
+
+        $this->assertSame(
+            $original->getLatitude()->getValue(),
+            $restored->getLatitude()->getValue()
+        );
+        $this->assertSame(
+            $original->getLongitude()->getValue(),
+            $restored->getLongitude()->getValue()
+        );
     }
 
     // ========== TESTS DE COMPARAISON ==========

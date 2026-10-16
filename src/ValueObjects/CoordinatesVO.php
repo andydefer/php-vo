@@ -186,6 +186,31 @@ final class CoordinatesVO extends AbstractValueObject
     }
 
     /**
+     * Converts this coordinates VO to a Location VO.
+     *
+     * The resulting Location stores coordinates in LocationIQ order:
+     * `[longitude, latitude]`.
+     */
+    public function toLocation(): LocationVO
+    {
+        return LocationVO::fromArray([
+            $this->longitude->getValue(),
+            $this->latitude->getValue(),
+        ]);
+    }
+
+    /**
+     * Converts this coordinates VO to another CoordinatesVO instance.
+     *
+     * Provided for symmetry with {@see self::toLocation()} and to allow
+     * uniform conversion calls across VO types.
+     */
+    public function toCoordinates(): self
+    {
+        return new self($this->latitude, $this->longitude);
+    }
+
+    /**
      * Calculates the distance to another coordinate.
      *
      * @param  self  $other  The target coordinates
