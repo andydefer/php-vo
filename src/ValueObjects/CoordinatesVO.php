@@ -9,6 +9,7 @@ use AndyDefer\DomainStructures\Utils\Associative;
 use AndyDefer\PhpVo\Configs\CoordinatesConfig;
 use AndyDefer\PhpVo\Contracts\CoordinatesConfigInterface;
 use AndyDefer\PhpVo\Enums\SpaceTimeUnit;
+use AndyDefer\PhpVo\ValueObjects\Strings\UuidVO;
 use AndyDefer\PhpVo\ValueObjects\Types\BoolVO;
 use AndyDefer\PhpVo\ValueObjects\Types\FloatVO;
 use AndyDefer\PhpVo\ValueObjects\Types\StringVO;
@@ -20,6 +21,9 @@ use InvalidArgumentException;
  * Encapsulates latitude and longitude with validation, distance calculation,
  * and hemisphere detection. All operations return new instances.
  *
+ * An optional UUID and a human-readable name/description can be attached to
+ * label a specific point (e.g. a pharmacy, a stop, a warehouse).
+ *
  * @example
  * $coords = new CoordinatesVO(
  *     FloatVO::from(48.8566),
@@ -28,6 +32,14 @@ use InvalidArgumentException;
  *
  * echo $coords->format(); // '48.8566, 2.3522'
  * echo $coords->distanceTo($other); // Distance in kilometers
+ *
+ * $named = new CoordinatesVO(
+ *     FloatVO::from(48.8566),
+ *     FloatVO::from(2.3522),
+ *     UuidVO::generate(),
+ *     StringVO::from('Pharmacie centrale'),
+ *     StringVO::from('Point de retrait principal'),
+ * );
  */
 final class CoordinatesVO extends AbstractValueObject
 {
@@ -42,6 +54,9 @@ final class CoordinatesVO extends AbstractValueObject
     public function __construct(
         private readonly FloatVO $latitude,
         private readonly FloatVO $longitude,
+        private readonly ?UuidVO $uuid = null,
+        private readonly ?StringVO $name = null,
+        private readonly ?StringVO $description = null,
     ) {
         $this->validate();
     }
@@ -176,12 +191,17 @@ final class CoordinatesVO extends AbstractValueObject
 
     /**
      * Returns the coordinates as a record.
+     *
+     * Includes the optional UUID, name, and description when present.
      */
     public function getValue(): Associative
     {
         return Associative::from([
             'latitude' => $this->latitude->getValue(),
             'longitude' => $this->longitude->getValue(),
+            'uuid' => $this->uuid?->getValue(),
+            'name' => $this->name?->getValue(),
+            'description' => $this->description?->getValue(),
         ]);
     }
 
@@ -207,7 +227,13 @@ final class CoordinatesVO extends AbstractValueObject
      */
     public function toCoordinates(): self
     {
-        return new self($this->latitude, $this->longitude);
+        return new self(
+            $this->latitude,
+            $this->longitude,
+            $this->uuid,
+            $this->name,
+            $this->description,
+        );
     }
 
     /**
@@ -335,6 +361,146 @@ final class CoordinatesVO extends AbstractValueObject
     public function getLongitude(): FloatVO
     {
         return $this->longitude;
+    }
+
+    /**
+     * Gets the optional UUID identifying this point.
+     */
+    public function getUuid(): ?UuidVO
+    {
+        return $this->uuid;
+    }
+
+    /**
+     * Gets the optional human-readable name of this point.
+     */
+    public function getName(): ?StringVO
+    {
+        return $this->name;
+    }
+
+    /**
+     * Gets the optional human-readable description of this point.
+     */
+    public function getDescription(): ?StringVO
+    {
+        return $this->description;
+    }
+
+    /**
+     * Whether this point has been labelled (UUID, name, or description).
+     */
+    public function isNamed(): bool
+    {
+        return $this->uuid !== null
+            || $this->name !== null
+            || $this->description !== null;
+    }
+
+    /**
+     * Returns a new instance with the given UUID.
+     *
+     * Accepts either a UuidVO instance, a raw UUID string, or null to clear.
+     *
+     * @throws InvalidArgumentException When a string is not a valid UUID.
+     */
+    public function withUuid(UuidVO|string|null $uuid): self
+    {
+        if (is_string($uuid)) {
+            $uuid = new UuidVO($uuid);
+        }
+
+        return new self(
+            $this->latitude,
+            $this->longitude,
+            $uuid,
+            $this->name,
+            $this->description,
+        );
+    }
+
+    /**
+     * Returns a new instance with the given name.
+     *
+     * Accepts either a StringVO instance, a raw string, or null to clear.
+     */
+    public function withName(StringVO|string|null $name): self
+    {
+        if (is_string($name)) {
+            $name = StringVO::from($name);
+        }
+
+        return new self(
+            $this->latitude,
+            $this->longitude,
+            $this->uuid,
+            $name,
+            $this->description,
+        );
+    }
+
+    /**
+     * Returns a new instance with the given description.
+     *
+     * Accepts either a StringVO instance, a raw string, or null to clear.
+     */
+    public function withDescription(StringVO|string|null $description): self
+    {
+        if (is_string($description)) {
+            $description = StringVO::from($description);
+        }
+
+        return new self(
+            $this->latitude,
+            $this->longitude,
+            $this->uuid,
+            $this->name,
+            $description,
+        );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function equals(AbstractValueObject $other): bool
+    {
+        if (! $other instanceof self) {
+            return false;
+        }
+
+        if (! $this->latitude->equals($other->latitude)) {
+            return false;
+        }
+
+        if (! $this->longitude->equals($other->longitude)) {
+            return false;
+        }
+
+        if (($this->uuid === null) !== ($other->uuid === null)) {
+            return false;
+        }
+
+        if ($this->uuid !== null && ! $this->uuid->equals($other->uuid)) {
+            return false;
+        }
+
+        if (($this->name === null) !== ($other->name === null)) {
+            return false;
+        }
+
+        if ($this->name !== null && ! $this->name->equals($other->name)) {
+            return false;
+        }
+
+        if (($this->description === null) !== ($other->description === null)) {
+            return false;
+        }
+
+        if ($this->description !== null && ! $this->description->equals($other->description)) {
+            return false;
+        }
+
+        return true;
     }
 
     /**

@@ -2,9 +2,9 @@
 
 ## Description
 
-Value Object immuable représentant des coordonnées géographiques (latitude/longitude). Valide les bornes à la construction, calcule des distances via la formule de Haversine, détecte les hémisphères et se convertit vers `LocationVO`.
+Value Object immuable représentant des coordonnées géographiques (latitude/longitude). Valide les bornes à la construction, calcule des distances via la formule de Haversine, détecte les hémisphères et se convertit vers `LocationVO`. Supporte un UUID, un nom et une description optionnels pour labelliser un point.
 
-## Hiérarchie
+## Hiérarchie / Implémentations
 
 ```
 AbstractValueObject
@@ -13,7 +13,7 @@ AbstractValueObject
 
 ## Rôle principal
 
-Encapsule le concept métier de coordonnées géographiques sous forme de deux `FloatVO` distincts (`latitude`, `longitude`). Fournit les opérations géographiques usuelles : distance, comparaison avec tolérance, détection d'hémisphère. Sert de passerelle vers `LocationVO` pour l'interopérabilité LocationIQ.
+Encapsule le concept métier de coordonnées géographiques sous forme de deux `FloatVO` (`latitude`, `longitude`). Fournit les opérations géographiques usuelles : distance, comparaison avec tolérance, détection d'hémisphère. Sert de passerelle vers `LocationVO` pour l'interopérabilité LocationIQ. Permet d'attacher une identité (UUID), un nom et une description à un point pour simplifier l'affichage et le suivi.
 
 ## Installation
 
@@ -23,7 +23,7 @@ composer require andydefer/php-vo
 
 ## API / Méthodes publiques
 
-### `__construct(FloatVO $latitude, FloatVO $longitude)`
+### `__construct(FloatVO $latitude, FloatVO $longitude, ?UuidVO $uuid = null, ?StringVO $name = null, ?StringVO $description = null)`
 
 Construit une instance validée.
 
@@ -31,6 +31,9 @@ Construit une instance validée.
 |-----------|------|-------------|
 | `$latitude` | `FloatVO` | Latitude entre `-90` et `90` |
 | `$longitude` | `FloatVO` | Longitude entre `-180` et `180` |
+| `$uuid` | `?UuidVO` | Identifiant optionnel |
+| `$name` | `?StringVO` | Nom lisible optionnel |
+| `$description` | `?StringVO` | Description optionnelle |
 
 **Retourne :** `void`
 
@@ -41,6 +44,9 @@ Construit une instance validée.
 $coords = new CoordinatesVO(
     FloatVO::from(48.8566),
     FloatVO::from(2.3522),
+    UuidVO::generate(),
+    StringVO::from('Pharmacie centrale'),
+    StringVO::from('Point de retrait principal'),
 );
 ```
 
@@ -48,21 +54,24 @@ $coords = new CoordinatesVO(
 
 ### `getValue(): Associative`
 
-Retourne la représentation associatives des coordonnées.
+Retourne la représentation structurée des coordonnées et des labels.
 
-**Retourne :** `Associative` — `['latitude' => float, 'longitude' => float]`
+**Retourne :** `Associative` — Clés : `latitude`, `longitude`, `uuid`, `name`, `description`
 
 **Exemple :**
 ```php
-$coords->getValue()->latitude;  // 48.8566
-$coords->getValue()->longitude; // 2.3522
+$value = $coords->getValue();
+$value->latitude;    // 48.8566
+$value->longitude;   // 2.3522
+$value->uuid;        // "xxxxxxxx-xxxx-..." ou null
+$value->name;        // "Pharmacie centrale" ou null
 ```
 
 ---
 
 ### `toLocation(): LocationVO`
 
-Convertit vers `LocationVO` (ordre `[longitude, latitude]`).
+Convertit vers `LocationVO` (ordre `[longitude, latitude]`). Les labels ne sont **pas** propagés (voir `toCoordinates()` pour la préservation).
 
 **Retourne :** `LocationVO`
 
@@ -75,7 +84,7 @@ $location = $coords->toLocation();
 
 ### `toCoordinates(): self`
 
-Retourne une nouvelle instance équivalente.
+Retourne une nouvelle instance équivalente, labels préservés.
 
 **Retourne :** `self`
 
@@ -102,7 +111,7 @@ Calcule la distance à une autre coordonnée via la formule de Haversine.
 $paris = CoordinatesVO::from(['latitude' => 48.8566, 'longitude' => 2.3522]);
 $london = CoordinatesVO::from(['latitude' => 51.5074, 'longitude' => -0.1278]);
 
-echo $paris->distanceTo($london)->getValue(); // ~343.5 (km)
+echo $paris->distanceTo($london)->getValue(); // ~343.56
 ```
 
 ---
@@ -116,7 +125,7 @@ Vérifie si deux coordonnées sont identiques dans une tolérance donnée.
 | `$other` | `CoordinatesVO` | Coordonnées à comparer |
 | `$tolerance` | `?float` | Tolérance (défaut `0.0001`) |
 
-**Retourne :** `BoolVO` — `true` si latitude et longitude sont dans la tolérance
+**Retourne :** `BoolVO`
 
 **Exemple :**
 ```php
@@ -195,6 +204,127 @@ Retourne la longitude.
 
 ---
 
+### `getUuid(): ?UuidVO`
+
+Retourne l'UUID optionnel.
+
+**Retourne :** `?UuidVO`
+
+**Exemple :**
+```php
+$coords->getUuid()?->getValue(); // "xxxxxxxx-xxxx-..."
+```
+
+---
+
+### `getName(): ?StringVO`
+
+Retourne le nom optionnel.
+
+**Retourne :** `?StringVO`
+
+**Exemple :**
+```php
+$coords->getName()?->getValue(); // "Pharmacie centrale"
+```
+
+---
+
+### `getDescription(): ?StringVO`
+
+Retourne la description optionnelle.
+
+**Retourne :** `?StringVO`
+
+**Exemple :**
+```php
+$coords->getDescription()?->getValue(); // "Point de retrait principal"
+```
+
+---
+
+### `isNamed(): bool`
+
+Retourne `true` si au moins un label est présent.
+
+**Retourne :** `bool`
+
+**Exemple :**
+```php
+$coords->isNamed(); // true|false
+```
+
+---
+
+### `withUuid(?UuidVO $uuid): self`
+
+Retourne une nouvelle instance avec un UUID remplacé.
+
+| Paramètre | Type | Description |
+|-----------|------|-------------|
+| `$uuid` | `?UuidVO` | Nouvel UUID ou `null` pour le retirer |
+
+**Retourne :** `self`
+
+**Exemple :**
+```php
+$identified = $coords->withUuid(UuidVO::generate());
+$anonymous = $coords->withUuid(null);
+```
+
+---
+
+### `withName(?StringVO $name): self`
+
+Retourne une nouvelle instance avec un nom remplacé.
+
+| Paramètre | Type | Description |
+|-----------|------|-------------|
+| `$name` | `?StringVO` | Nouveau nom ou `null` pour le retirer |
+
+**Retourne :** `self`
+
+**Exemple :**
+```php
+$renamed = $coords->withName(StringVO::from('Pharmacie Nord'));
+```
+
+---
+
+### `withDescription(?StringVO $description): self`
+
+Retourne une nouvelle instance avec une description remplacée.
+
+| Paramètre | Type | Description |
+|-----------|------|-------------|
+| `$description` | `?StringVO` | Nouvelle description ou `null` pour la retirer |
+
+**Retourne :** `self`
+
+**Exemple :**
+```php
+$described = $coords->withDescription(StringVO::from('Ouvert 24/7'));
+```
+
+---
+
+### `equals(AbstractValueObject $other): bool`
+
+Compare deux instances par valeur (coordonnées et labels).
+
+| Paramètre | Type | Description |
+|-----------|------|-------------|
+| `$other` | `AbstractValueObject` | Instance à comparer |
+
+**Retourne :** `bool`
+
+**Exemple :**
+```php
+$a->equals($b); // true|false
+```
+
+---
+
 ### `__toString(): string`
 
 Retourne le résultat de `format()`.
@@ -232,7 +362,21 @@ $user = CoordinatesVO::from(['latitude' => 48.8600, 'longitude' => 2.3600]);
 $withinRadius = $store->distanceTo($user)->lessThan(5)->getValue();
 ```
 
-### Cas 3 : Préparer un payload LocationIQ
+### Cas 3 : Enrichir un point avec un label
+
+```php
+$point = CoordinatesVO::from(['latitude' => 48.8566, 'longitude' => 2.3522]);
+
+$named = $point
+    ->withUuid(UuidVO::generate())
+    ->withName(StringVO::from('Pharmacie centrale'))
+    ->withDescription(StringVO::from('Ouvert 24/7'));
+
+echo $named->isNamed();               // true
+echo $named->getName()?->getValue();  // "Pharmacie centrale"
+```
+
+### Cas 4 : Préparer un payload LocationIQ
 
 ```php
 $coords = CoordinatesVO::from(['latitude' => 48.8566, 'longitude' => 2.3522]);
@@ -245,14 +389,14 @@ $payload = [
 ## Flux d'exécution
 
 ```
-new CoordinatesVO(FloatVO, FloatVO)
+new CoordinatesVO(FloatVO, FloatVO, ?UuidVO, ?StringVO, ?StringVO)
     ↓
 validate()
     ├── validateLatitude()  → hors bornes → InvalidArgumentException
     └── validateLongitude() → hors bornes → InvalidArgumentException
     ↓
 Instance validée
-    ↓
+
 distanceTo($other)
     ├── calculateCentralAngle()  → Haversine (radians → a → c)
     ├── getEarthRadius($unit)    → 6371 km ou ×1000 m
@@ -277,6 +421,8 @@ LocationVO ──toCoordinates()──► CoordinatesVO
                                      ├──► isSameLocation()
                                      ├──► format()
                                      ├──► isXHemisphere()
+                                     ├──► getUuid()/getName()/getDescription()
+                                     ├──► withUuid()/withName()/withDescription()
                                      └──► toLocation() ──► LocationVO
 ```
 
@@ -287,6 +433,7 @@ Utilisé en aval de `LocationVO` pour toute opération de calcul géographique. 
 - Construction : validation en O(1) via comparaisons de `FloatVO`.
 - `distanceTo()` : formule de Haversine, ~10 opérations arithmétiques sur `FloatVO`.
 - `format()` : un seul `sprintf`.
+- `withX()` : recrée une instance — pas de mutation.
 - Aucune mise en cache nécessaire.
 
 ## Compatibilité
@@ -305,6 +452,9 @@ declare(strict_types=1);
 
 use AndyDefer\PhpVo\Enums\SpaceTimeUnit;
 use AndyDefer\PhpVo\ValueObjects\CoordinatesVO;
+use AndyDefer\PhpVo\ValueObjects\Strings\UuidVO;
+use AndyDefer\PhpVo\ValueObjects\Types\FloatVO;
+use AndyDefer\PhpVo\ValueObjects\Types\StringVO;
 
 // 1. Créer depuis un tableau
 $paris = CoordinatesVO::from([
@@ -330,9 +480,18 @@ $london = CoordinatesVO::from([
 ]);
 
 $km = $paris->distanceTo($london, SpaceTimeUnit::KILOMETRE);
-echo $km->getValue(); // ~343.5
+echo $km->getValue(); // ~343.56
 
-// 6. Conversion vers LocationVO
-$location = $paris->toLocation();
+// 6. Enrichir avec un label
+$named = $paris
+    ->withUuid(UuidVO::generate())
+    ->withName(StringVO::from('Siège Paris'))
+    ->withDescription(StringVO::from('Bureaux principaux'));
+
+echo $named->isNamed();               // true
+echo $named->getName()?->getValue();  // "Siège Paris"
+
+// 7. Conversion vers LocationVO
+$location = $named->toLocation();
 echo (string) $location; // "2.352200,48.856600"
 ```

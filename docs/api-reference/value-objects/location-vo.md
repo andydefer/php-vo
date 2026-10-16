@@ -2,9 +2,9 @@
 
 ## Description
 
-Value Object immuable représentant une paire de coordonnées géographiques (`[longitude, latitude]`) au format attendu par LocationIQ. Valide l'arité (exactement 2 floats) et l'homogénéité numérique à la construction.
+Value Object immuable représentant une paire de coordonnées géographiques (`[longitude, latitude]`) au format LocationIQ, avec support optionnel d'un UUID, d'un nom et d'une description.
 
-## Hiérarchie
+## Hiérarchie / Implémentations
 
 ```
 AbstractValueObject
@@ -15,6 +15,8 @@ AbstractValueObject
 
 Encapsule la représentation d'une localisation géographique telle qu'attendue par l'API LocationIQ : un tableau ordonné de deux floats `[longitude, latitude]`. Sert de frontière entre les données brutes (tableaux, chaînes numériques) et un concept métier typé. Ne contient aucune logique de calcul géographique — celle-ci appartient à `CoordinatesVO`.
 
+Permet également d'attacher une identité (UUID), un nom lisible et une description à un point, ce qui simplifie l'affichage côté utilisateur.
+
 ## Installation
 
 ```bash
@@ -23,13 +25,16 @@ composer require andydefer/php-vo
 
 ## API / Méthodes publiques
 
-### `__construct(FloatTypedCollection $coordinates)`
+### `__construct(FloatTypedCollection $coordinates, ?UuidVO $uuid = null, ?StringVO $name = null, ?StringVO $description = null)`
 
-Construit une instance depuis une collection typée de floats.
+Construit une instance depuis une collection typée de floats et des labels optionnels.
 
 | Paramètre | Type | Description |
 |-----------|------|-------------|
 | `$coordinates` | `FloatTypedCollection` | Collection ordonnée `[longitude, latitude]` |
+| `$uuid` | `?UuidVO` | Identifiant optionnel |
+| `$name` | `?StringVO` | Nom lisible optionnel |
+| `$description` | `?StringVO` | Description optionnelle |
 
 **Retourne :** `void`
 
@@ -41,20 +46,28 @@ $collection = new FloatTypedCollection;
 $collection->add(15.3222);
 $collection->add(-4.3250);
 
-$location = new LocationVO($collection);
+$location = new LocationVO(
+    $collection,
+    UuidVO::generate(),
+    StringVO::from('Pharmacie Kinshasa'),
+    StringVO::from('Point de retrait principal'),
+);
 ```
 
 ---
 
-### `static fromArray(array $coordinates): self`
+### `static fromArray(array $coordinates, ?UuidVO $uuid = null, ?StringVO $name = null, ?StringVO $description = null): self`
 
 Crée une instance depuis un tableau de coordonnées numériques.
 
 | Paramètre | Type | Description |
 |-----------|------|-------------|
 | `$coordinates` | `array<int, float\|int\|string>` | Tableau ordonné `[longitude, latitude]` |
+| `$uuid` | `?UuidVO` | Identifiant optionnel |
+| `$name` | `?StringVO` | Nom lisible optionnel |
+| `$description` | `?StringVO` | Description optionnelle |
 
-**Retourne :** `self` — Nouvelle instance de `LocationVO`
+**Retourne :** `self`
 
 **Exceptions :**
 - `InvalidArgumentException` — si une coordonnée n'est pas numérique.
@@ -69,9 +82,9 @@ $location = LocationVO::fromArray([15.3222, -4.3250]);
 
 ### `toCoordinates(): CoordinatesVO`
 
-Convertit ce `LocationVO` en `CoordinatesVO` (latitude/longitude séparées).
+Convertit ce `LocationVO` en `CoordinatesVO`. Les labels (`uuid`, `name`, `description`) sont préservés.
 
-**Retourne :** `CoordinatesVO` — Instance équivalente
+**Retourne :** `CoordinatesVO`
 
 **Exemple :**
 ```php
@@ -83,7 +96,7 @@ echo $coords->getLatitude()->getValue(); // 48.8566
 
 ### `withLongitude(float $longitude): self`
 
-Retourne une nouvelle instance avec une longitude remplacée.
+Retourne une nouvelle instance avec une longitude remplacée. Les labels sont préservés.
 
 | Paramètre | Type | Description |
 |-----------|------|-------------|
@@ -100,7 +113,7 @@ $updated = $location->withLongitude(10.0);
 
 ### `withLatitude(float $latitude): self`
 
-Retourne une nouvelle instance avec une latitude remplacée.
+Retourne une nouvelle instance avec une latitude remplacée. Les labels sont préservés.
 
 | Paramètre | Type | Description |
 |-----------|------|-------------|
@@ -111,6 +124,58 @@ Retourne une nouvelle instance avec une latitude remplacée.
 **Exemple :**
 ```php
 $updated = $location->withLatitude(10.0);
+```
+
+---
+
+### `withUuid(?UuidVO $uuid): self`
+
+Retourne une nouvelle instance avec un UUID remplacé.
+
+| Paramètre | Type | Description |
+|-----------|------|-------------|
+| `$uuid` | `?UuidVO` | Nouvel UUID, ou `null` pour le retirer |
+
+**Retourne :** `self`
+
+**Exemple :**
+```php
+$identified = $location->withUuid(UuidVO::generate());
+$anonymous = $location->withUuid(null);
+```
+
+---
+
+### `withName(?StringVO $name): self`
+
+Retourne une nouvelle instance avec un nom remplacé.
+
+| Paramètre | Type | Description |
+|-----------|------|-------------|
+| `$name` | `?StringVO` | Nouveau nom, ou `null` pour le retirer |
+
+**Retourne :** `self`
+
+**Exemple :**
+```php
+$renamed = $location->withName(StringVO::from('Pharmacie Nord'));
+```
+
+---
+
+### `withDescription(?StringVO $description): self`
+
+Retourne une nouvelle instance avec une description remplacée.
+
+| Paramètre | Type | Description |
+|-----------|------|-------------|
+| `$description` | `?StringVO` | Nouvelle description, ou `null` pour la retirer |
+
+**Retourne :** `self`
+
+**Exemple :**
+```php
+$described = $location->withDescription(StringVO::from('Ouvert 24/7'));
 ```
 
 ---
@@ -168,6 +233,58 @@ $collection->toArray(); // [15.3222, -4.325]
 
 ---
 
+### `getUuid(): ?UuidVO`
+
+Retourne l'UUID optionnel.
+
+**Retourne :** `?UuidVO`
+
+**Exemple :**
+```php
+$location->getUuid()?->getValue(); // "xxxxxxxx-xxxx-..."
+```
+
+---
+
+### `getName(): ?StringVO`
+
+Retourne le nom optionnel.
+
+**Retourne :** `?StringVO`
+
+**Exemple :**
+```php
+$location->getName()?->getValue(); // "Pharmacie Kinshasa"
+```
+
+---
+
+### `getDescription(): ?StringVO`
+
+Retourne la description optionnelle.
+
+**Retourne :** `?StringVO`
+
+**Exemple :**
+```php
+$location->getDescription()?->getValue(); // "Point de retrait principal"
+```
+
+---
+
+### `isNamed(): bool`
+
+Retourne `true` si au moins un label (`uuid`, `name` ou `description`) est présent.
+
+**Retourne :** `bool`
+
+**Exemple :**
+```php
+$location->isNamed(); // true|false
+```
+
+---
+
 ### `toArray(): array`
 
 Retourne les coordonnées sous forme de tableau scalaire brut.
@@ -183,20 +300,17 @@ $location->toArray(); // [15.3222, -4.325]
 
 ### `equals(AbstractValueObject $other): bool`
 
-Compare deux instances par valeur.
+Compare deux instances par valeur (coordonnées et labels).
 
 | Paramètre | Type | Description |
 |-----------|------|-------------|
 | `$other` | `AbstractValueObject` | Instance à comparer |
 
-**Retourne :** `bool` — `true` si les coordonnées sont identiques
+**Retourne :** `bool` — `true` si coordonnées et labels sont identiques
 
 **Exemple :**
 ```php
-$a = LocationVO::fromArray([15.3222, -4.3250]);
-$b = LocationVO::fromArray([15.3222, -4.3250]);
-
-$a->equals($b); // true
+$a->equals($b); // true|false
 ```
 
 ---
@@ -218,8 +332,6 @@ echo (string) $location; // "15.322200,-4.325000"
 
 ### Cas 1 : Préparer une requête vers l'API LocationIQ
 
-LocationIQ attend un paramètre `coordinates` au format `longitude,latitude`.
-
 ```php
 $location = LocationVO::fromArray([2.3522, 48.8566]);
 
@@ -229,20 +341,25 @@ $query = http_build_query([
 ]);
 ```
 
-### Cas 2 : Convertir une réponse API en objet métier
+### Cas 2 : Convertir une réponse API en objet métier nommé
 
 ```php
-$apiResponse = ['lon' => '15.3222', 'lat' => '-4.3250'];
+$apiResponse = [
+    'lon' => '15.3222',
+    'lat' => '-4.3250',
+    'name' => 'Pharmacie Kinshasa',
+];
 
-$location = LocationVO::fromArray([
-    $apiResponse['lon'],
-    $apiResponse['lat'],
-]);
+$location = LocationVO::fromArray(
+    [$apiResponse['lon'], $apiResponse['lat']],
+    UuidVO::generate(),
+    StringVO::from($apiResponse['name']),
+);
 
 $coords = $location->toCoordinates();
 ```
 
-### Cas 3 : Mise à jour immuable
+### Cas 3 : Mise à jour immuable des coordonnées
 
 ```php
 $original = LocationVO::fromArray([2.3522, 48.8566]);
@@ -252,27 +369,44 @@ echo $original->getLatitude(); // 48.8566
 echo $moved->getLatitude();    // 48.9
 ```
 
+### Cas 4 : Enrichir un point existant avec un label
+
+```php
+$point = LocationVO::fromArray([15.3222, -4.3250]);
+
+$named = $point
+    ->withName(StringVO::from('Entrepôt Central'))
+    ->withDescription(StringVO::from('Livraisons du lundi au samedi'));
+
+echo $named->isNamed();       // true
+echo $named->getName()?->getValue(); // "Entrepôt Central"
+```
+
 ## Flux d'exécution
 
 ```
-fromArray($coords)
+fromArray($coords, $uuid, $name, $description)
     ↓
-is_numeric? ── non ──→ InvalidArgumentException
-    ↓ oui
-FloatTypedCollection::add((float) $coord)
-    ↓ (pour chaque élément)
-new LocationVO($collection)
+Boucle sur $coords :
+    ├── is_numeric ? ── non ──→ InvalidArgumentException
+    └── oui → FloatTypedCollection::add((float) $coord)
     ↓
-count === 2? ── non ──→ InvalidArgumentException
+new LocationVO($collection, $uuid, $name, $description)
+    ↓
+count === 2 ? ── non ──→ InvalidArgumentException
     ↓ oui
 Instance validée
+
+withX($value)
+    ↓
+new LocationVO(...) (labels préservés)
 ```
 
 ## Gestion des erreurs
 
 | Situation | Exception | Message |
 |-----------|-----------|---------|
-| Coordonnée non numérique | `InvalidArgumentException` | `Location coordinate must be numeric, %s given.` (`%s` = `get_debug_type`) |
+| Coordonnée non numérique | `InvalidArgumentException` | `Location coordinate must be numeric, %s given.` |
 | Arité ≠ 2 à la construction | `InvalidArgumentException` | `Location must contain exactly 2 floats, %d given.` |
 | Arité ≠ 2 via `fromArray` | `InvalidArgumentException` | `Location must contain exactly 2 floats, %d given.` |
 | Tableau vide | `InvalidArgumentException` | `Location must contain exactly 2 floats, 0 given.` |
@@ -285,10 +419,11 @@ Données brutes (array, string, API)
         ▼
    LocationVO::fromArray()
         │
-        ├──► getLongitude() / getLatitude()  → usage direct
-        ├──► toArray()                       → payload JSON / API
-        ├──► __toString()                    → paramètre query LocationIQ
-        └──► toCoordinates()                 → calculs géographiques
+        ├──► getLongitude() / getLatitude()   → usage direct
+        ├──► toArray()                        → payload JSON / API
+        ├──► __toString()                     → paramètre query LocationIQ
+        ├──► getUuid() / getName() / getDescription()  → affichage
+        └──► toCoordinates()                  → calculs géographiques
                     │
                     ▼
               CoordinatesVO
@@ -296,22 +431,22 @@ Données brutes (array, string, API)
                     └──► distanceTo(), isSameLocation(), etc.
 ```
 
-`LocationVO` est conçu pour rester la représentation brute côté LocationIQ. Toute logique de calcul, comparaison géographique ou formatage avancé se fait après conversion en `CoordinatesVO`.
+`LocationVO` reste la représentation brute côté LocationIQ. Toute logique de calcul se fait après conversion en `CoordinatesVO`. Les labels sont propagés lors de la conversion.
 
 ## Performance
 
 - Construction en O(1) : deux itérations maximum sur `fromArray` (2 éléments).
 - Validation par `is_numeric()` et `count()` — opérations natives rapides.
-- `equals()` compare deux tableaux de 2 floats — comparaison triviale.
+- `equals()` compare coordonnées + labels : coût constant.
+- `withX()` recrée une instance — pas de mutation.
 - `__toString()` alloue une chaîne via `sprintf` — coût négligeable.
-- Aucun cache nécessaire.
 
 ## Compatibilité
 
 | Version PHP | Support |
 |-------------|---------|
-| PHP 8.1+ | ✅ Complet (readonly properties, enums) |
-| PHP 8.0 | ⚠️ Nécessite adaptation si `readonly` non supporté |
+| PHP 8.1+ | ✅ Complet (readonly, enums) |
+| PHP 8.0 | ⚠️ Vérifier le support des propriétés `readonly` |
 
 ## Exemple complet
 
@@ -321,7 +456,8 @@ Données brutes (array, string, API)
 declare(strict_types=1);
 
 use AndyDefer\PhpVo\ValueObjects\LocationVO;
-use AndyDefer\PhpVo\ValueObjects\CoordinatesVO;
+use AndyDefer\PhpVo\ValueObjects\Strings\UuidVO;
+use AndyDefer\PhpVo\ValueObjects\Types\StringVO;
 
 // 1. Créer depuis un tableau brut
 $location = LocationVO::fromArray([2.3522, 48.8566]);
@@ -330,23 +466,33 @@ $location = LocationVO::fromArray([2.3522, 48.8566]);
 echo $location->getLongitude(); // 2.3522
 echo $location->getLatitude();  // 48.8566
 
-// 3. Utiliser dans une requête API
+// 3. Ajouter un label
+$named = $location
+    ->withUuid(UuidVO::generate())
+    ->withName(StringVO::from('Siège Paris'))
+    ->withDescription(StringVO::from('Bureaux principaux'));
+
+echo $named->isNamed();               // true
+echo $named->getName()?->getValue();  // "Siège Paris"
+
+// 4. Utiliser dans une requête API
 $url = sprintf(
     'https://us1.locationiq.com/v1/nearby?key=%s&coordinates=%s',
     $_ENV['LOCATIONIQ_KEY'],
-    (string) $location
+    (string) $named,
 );
 
-// 4. Mise à jour immuable
-$moved = $location->withLatitude(48.9000);
-assert($location->getLatitude() !== $moved->getLatitude());
+// 5. Mise à jour immuable
+$moved = $named->withLatitude(48.9000);
+assert($named->getLatitude() !== $moved->getLatitude());
 
-// 5. Conversion pour calculs
-$coords = $location->toCoordinates();
-assert($coords instanceof CoordinatesVO);
+// 6. Conversion vers CoordinatesVO (labels préservés)
+$coords = $named->toCoordinates();
+echo $coords->getName()?->getValue(); // "Siège Paris"
 
-// 6. Sérialisation JSON
+// 7. Sérialisation JSON
 $payload = json_encode([
-    'coordinates' => $location->toArray(),
-]); // {"coordinates":[2.3522,48.8566]}
+    'coordinates' => $named->toArray(),
+    'name' => $named->getName()?->getValue(),
+]); // {"coordinates":[2.3522,48.8566],"name":"Siège Paris"}
 ```
