@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace AndyDefer\PhpVo\ValueObjects;
 
 use AndyDefer\DomainStructures\Abstracts\AbstractValueObject;
-use AndyDefer\DomainStructures\Utils\StrictAssociative;
+use AndyDefer\DomainStructures\Utils\Associative;
 use AndyDefer\PhpVo\Enums\DistanceUnit;
 use AndyDefer\PhpVo\ValueObjects\Types\FloatVO;
 
@@ -107,9 +107,9 @@ final class ItinerarySummaryVO extends AbstractValueObject
     /**
      * {@inheritDoc}
      */
-    public function getValue(): StrictAssociative
+    public function getValue(): Associative
     {
-        return StrictAssociative::from([
+        return Associative::from([
             'legCount' => $this->legCount,
             'pointCount' => $this->pointCount,
             'intermediateCount' => $this->intermediateCount,

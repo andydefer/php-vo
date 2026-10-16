@@ -8,47 +8,14 @@ use AndyDefer\DomainStructures\Abstracts\AbstractValueObject;
 use AndyDefer\DomainStructures\Utils\Associative;
 use AndyDefer\PhpVo\Configs\CoordinatesConfig;
 use AndyDefer\PhpVo\Contracts\CoordinatesConfigInterface;
-use AndyDefer\PhpVo\Enums\SpaceTimeUnit;
+use AndyDefer\PhpVo\ValueObjects\Abstracts\AbstractCoordinatesVO;
 use AndyDefer\PhpVo\ValueObjects\Strings\UuidVO;
-use AndyDefer\PhpVo\ValueObjects\Types\BoolVO;
 use AndyDefer\PhpVo\ValueObjects\Types\FloatVO;
 use AndyDefer\PhpVo\ValueObjects\Types\StringVO;
 use InvalidArgumentException;
 
-/**
- * Immutable Value Object representing geographic coordinates.
- *
- * Encapsulates latitude and longitude with validation, distance calculation,
- * and hemisphere detection. All operations return new instances.
- *
- * An optional UUID and a human-readable name/description can be attached to
- * label a specific point (e.g. a pharmacy, a stop, a warehouse).
- *
- * @example
- * $coords = new CoordinatesVO(
- *     FloatVO::from(48.8566),
- *     FloatVO::from(2.3522)
- * );
- *
- * echo $coords->format(); // '48.8566, 2.3522'
- * echo $coords->distanceTo($other); // Distance in kilometers
- *
- * $named = new CoordinatesVO(
- *     FloatVO::from(48.8566),
- *     FloatVO::from(2.3522),
- *     UuidVO::generate(),
- *     StringVO::from('Pharmacie centrale'),
- *     StringVO::from('Point de retrait principal'),
- * );
- */
-final class CoordinatesVO extends AbstractValueObject
+final class CoordinatesVO extends AbstractCoordinatesVO
 {
-    private const EARTH_RADIUS_KM = 6371.0;
-
-    private const DEFAULT_TOLERANCE = 0.0001;
-
-    private const DEGREES_TO_RADIANS = M_PI / 180;
-
     private static ?CoordinatesConfigInterface $config = null;
 
     public function __construct(
@@ -62,138 +29,31 @@ final class CoordinatesVO extends AbstractValueObject
     }
 
     /**
-     * Gets the configuration instance.
+     * Public accessor returning a FloatVO (unchanged).
      */
-    private static function getConfig(): CoordinatesConfigInterface
+    public function getLatitude(): FloatVO
     {
-        return self::$config ??= new CoordinatesConfig;
+        return $this->latitude;
     }
 
     /**
-     * Validates latitude and longitude ranges.
-     *
-     * @throws InvalidArgumentException If coordinates are out of bounds
+     * Public accessor returning a FloatVO (unchanged).
      */
-    private function validate(): void
+    public function getLongitude(): FloatVO
     {
-        $config = self::getConfig();
-
-        $this->validateLatitude($config);
-        $this->validateLongitude($config);
+        return $this->longitude;
     }
 
-    /**
-     * Validates the latitude is within bounds.
-     */
-    private function validateLatitude(CoordinatesConfigInterface $config): void
+    protected function latitudeValue(): float
     {
-        $lat = $this->latitude;
-
-        if ($lat->lessThan($config->latitudeMin())->getValue() ||
-            $lat->greaterThan($config->latitudeMax())->getValue()) {
-            throw new InvalidArgumentException(
-                $this->buildOutOfBoundsMessage(
-                    'Latitude',
-                    $config->latitudeMin(),
-                    $config->latitudeMax(),
-                    $lat
-                )
-            );
-        }
+        return $this->latitude->getValue();
     }
 
-    /**
-     * Validates the longitude is within bounds.
-     */
-    private function validateLongitude(CoordinatesConfigInterface $config): void
+    protected function longitudeValue(): float
     {
-        $lon = $this->longitude;
-
-        if ($lon->lessThan($config->longitudeMin())->getValue() ||
-            $lon->greaterThan($config->longitudeMax())->getValue()) {
-            throw new InvalidArgumentException(
-                $this->buildOutOfBoundsMessage(
-                    'Longitude',
-                    $config->longitudeMin(),
-                    $config->longitudeMax(),
-                    $lon
-                )
-            );
-        }
+        return $this->longitude->getValue();
     }
 
-    /**
-     * Builds a formatted out-of-bounds error message.
-     */
-    private function buildOutOfBoundsMessage(
-        string $coordinateName,
-        FloatVO $min,
-        FloatVO $max,
-        FloatVO $value
-    ): string {
-        return StringVO::from('{name} must be between {min} and {max}, got {value}')
-            ->format([
-                'name' => $coordinateName,
-                'min' => $min->format(1)->getValue(),
-                'max' => $max->format(1)->getValue(),
-                'value' => $value->format(6)->getValue(),
-            ])
-            ->getValue();
-    }
-
-    /**
-     * Converts degrees to radians.
-     */
-    private function toRadians(FloatVO $degrees): FloatVO
-    {
-        return $degrees->multiply(self::DEGREES_TO_RADIANS);
-    }
-
-    /**
-     * Calculates the central angle using the Haversine formula.
-     *
-     * @see https://en.wikipedia.org/wiki/Haversine_formula
-     */
-    private function calculateCentralAngle(self $other): FloatVO
-    {
-        $latFrom = $this->toRadians($this->latitude);
-        $latTo = $this->toRadians($other->latitude);
-        $lonFrom = $this->toRadians($this->longitude);
-        $lonTo = $this->toRadians($other->longitude);
-
-        $latDelta = $latTo->subtract($latFrom);
-        $lonDelta = $lonTo->subtract($lonFrom);
-
-        // a = sin²(Δlat/2) + cos(lat1) * cos(lat2) * sin²(Δlon/2)
-        $a = $latDelta->divide(2)
-            ->sin()
-            ->pow(2)
-            ->add(
-                $latFrom->cos()
-                    ->multiply($latTo->cos())
-                    ->multiply(
-                        $lonDelta->divide(2)
-                            ->sin()
-                            ->pow(2)
-                    )
-            );
-
-        // c = 2 * atan2(√a, √(1-a))
-        return $a->clamp(0, 1)
-            ->sqrt()
-            ->atan2(
-                $a->subtract(1)
-                    ->abs()
-                    ->sqrt()
-            )
-            ->multiply(2);
-    }
-
-    /**
-     * Returns the coordinates as a record.
-     *
-     * Includes the optional UUID, name, and description when present.
-     */
     public function getValue(): Associative
     {
         return Associative::from([
@@ -205,12 +65,6 @@ final class CoordinatesVO extends AbstractValueObject
         ]);
     }
 
-    /**
-     * Converts this coordinates VO to a Location VO.
-     *
-     * The resulting Location stores coordinates in LocationIQ order:
-     * `[longitude, latitude]`.
-     */
     public function toLocation(): LocationVO
     {
         return LocationVO::fromArray([
@@ -219,12 +73,6 @@ final class CoordinatesVO extends AbstractValueObject
         ]);
     }
 
-    /**
-     * Converts this coordinates VO to another CoordinatesVO instance.
-     *
-     * Provided for symmetry with {@see self::toLocation()} and to allow
-     * uniform conversion calls across VO types.
-     */
     public function toCoordinates(): self
     {
         return new self(
@@ -236,232 +84,20 @@ final class CoordinatesVO extends AbstractValueObject
         );
     }
 
-    /**
-     * Calculates the distance to another coordinate.
-     *
-     * @param  self  $other  The target coordinates
-     * @param  SpaceTimeUnit  $unit  Unit of measurement (Kilometre or Metre)
-     * @return FloatVO Distance in the specified unit (rounded to 2 decimals)
-     */
-    public function distanceTo(self $other, SpaceTimeUnit $unit = SpaceTimeUnit::KILOMETRE): FloatVO
-    {
-        $target = self::from($other);
-
-        $centralAngle = $this->calculateCentralAngle($target);
-        $radius = $this->getEarthRadius($unit);
-
-        return $centralAngle
-            ->multiply($radius)
-            ->round(2);
-    }
-
-    /**
-     * Gets the Earth radius for the specified unit.
-     */
-    private function getEarthRadius(SpaceTimeUnit $unit): FloatVO
-    {
-        $radius = FloatVO::from(self::EARTH_RADIUS_KM);
-
-        if ($unit === SpaceTimeUnit::METRE) {
-            return $radius->multiply(1000);
-        }
-
-        return $radius;
-    }
-
-    /**
-     * Checks if two coordinates are at the same location within tolerance.
-     *
-     * @param  self  $other  The coordinates to compare
-     * @param  float|null  $tolerance  Tolerance for comparison (default: 0.0001)
-     * @return BoolVO True if coordinates are within tolerance
-     */
-    public function isSameLocation(CoordinatesVO $other, ?float $tolerance = null): BoolVO
-    {
-        $target = self::from($other);
-        $tolerance = FloatVO::from($tolerance ?? self::DEFAULT_TOLERANCE);
-
-        $latDiff = $this->latitude->subtract($target->latitude)->abs();
-        $lonDiff = $this->longitude->subtract($target->longitude)->abs();
-
-        $isSameLat = $latDiff->lessThan($tolerance)->getValue();
-        $isSameLon = $lonDiff->lessThan($tolerance)->getValue();
-
-        return BoolVO::from($isSameLat && $isSameLon);
-    }
-
-    /**
-     * Formats the coordinates as a string.
-     *
-     * @param  int  $decimals  Number of decimal places (default: 4)
-     * @return StringVO Formatted string: "latitude, longitude"
-     */
-    public function format(int $decimals = 4): StringVO
-    {
-        return StringVO::from(
-            sprintf(
-                '%.'.$decimals.'f, %.'.$decimals.'f',
-                $this->latitude->getValue(),
-                $this->longitude->getValue()
-            )
-        );
-    }
-
-    /**
-     * Checks if the location is in the Northern Hemisphere.
-     *
-     * @return BoolVO True if latitude > 0
-     */
-    public function isNorthernHemisphere(): BoolVO
-    {
-        return $this->latitude->greaterThan(0);
-    }
-
-    /**
-     * Checks if the location is in the Southern Hemisphere.
-     *
-     * @return BoolVO True if latitude < 0
-     */
-    public function isSouthernHemisphere(): BoolVO
-    {
-        return $this->latitude->lessThan(0);
-    }
-
-    /**
-     * Checks if the location is in the Eastern Hemisphere.
-     *
-     * @return BoolVO True if longitude > 0
-     */
-    public function isEasternHemisphere(): BoolVO
-    {
-        return $this->longitude->greaterThan(0);
-    }
-
-    /**
-     * Checks if the location is in the Western Hemisphere.
-     *
-     * @return BoolVO True if longitude < 0
-     */
-    public function isWesternHemisphere(): BoolVO
-    {
-        return $this->longitude->lessThan(0);
-    }
-
-    /**
-     * Gets the latitude value.
-     */
-    public function getLatitude(): FloatVO
-    {
-        return $this->latitude;
-    }
-
-    /**
-     * Gets the longitude value.
-     */
-    public function getLongitude(): FloatVO
-    {
-        return $this->longitude;
-    }
-
-    /**
-     * Gets the optional UUID identifying this point.
-     */
-    public function getUuid(): ?UuidVO
-    {
-        return $this->uuid;
-    }
-
-    /**
-     * Gets the optional human-readable name of this point.
-     */
-    public function getName(): ?StringVO
-    {
-        return $this->name;
-    }
-
-    /**
-     * Gets the optional human-readable description of this point.
-     */
-    public function getDescription(): ?StringVO
-    {
-        return $this->description;
-    }
-
-    /**
-     * Whether this point has been labelled (UUID, name, or description).
-     */
-    public function isNamed(): bool
-    {
-        return $this->uuid !== null
-            || $this->name !== null
-            || $this->description !== null;
-    }
-
-    /**
-     * Returns a new instance with the given UUID.
-     *
-     * Accepts either a UuidVO instance, a raw UUID string, or null to clear.
-     *
-     * @throws InvalidArgumentException When a string is not a valid UUID.
-     */
-    public function withUuid(UuidVO|string|null $uuid): self
-    {
-        if (is_string($uuid)) {
-            $uuid = new UuidVO($uuid);
-        }
-
+    protected function copyWithLabels(
+        ?UuidVO $uuid,
+        ?StringVO $name,
+        ?StringVO $description,
+    ): static {
         return new self(
             $this->latitude,
             $this->longitude,
             $uuid,
-            $this->name,
-            $this->description,
-        );
-    }
-
-    /**
-     * Returns a new instance with the given name.
-     *
-     * Accepts either a StringVO instance, a raw string, or null to clear.
-     */
-    public function withName(StringVO|string|null $name): self
-    {
-        if (is_string($name)) {
-            $name = StringVO::from($name);
-        }
-
-        return new self(
-            $this->latitude,
-            $this->longitude,
-            $this->uuid,
             $name,
-            $this->description,
-        );
-    }
-
-    /**
-     * Returns a new instance with the given description.
-     *
-     * Accepts either a StringVO instance, a raw string, or null to clear.
-     */
-    public function withDescription(StringVO|string|null $description): self
-    {
-        if (is_string($description)) {
-            $description = StringVO::from($description);
-        }
-
-        return new self(
-            $this->latitude,
-            $this->longitude,
-            $this->uuid,
-            $this->name,
             $description,
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function equals(AbstractValueObject $other): bool
     {
         if (! $other instanceof self) {
@@ -503,11 +139,67 @@ final class CoordinatesVO extends AbstractValueObject
         return true;
     }
 
-    /**
-     * Magic method for string representation.
-     */
     public function __toString(): string
     {
         return $this->format()->getValue();
+    }
+
+    // ============================================================
+    // VALIDATION
+    // ============================================================
+
+    private static function getConfig(): CoordinatesConfigInterface
+    {
+        return self::$config ??= new CoordinatesConfig;
+    }
+
+    private function validate(): void
+    {
+        $config = self::getConfig();
+
+        $this->validateLatitude($config);
+        $this->validateLongitude($config);
+    }
+
+    private function validateLatitude(CoordinatesConfigInterface $config): void
+    {
+        if ($this->latitude->lessThan($config->latitudeMin())->getValue()
+            || $this->latitude->greaterThan($config->latitudeMax())->getValue()) {
+            throw new InvalidArgumentException($this->outOfBounds(
+                'Latitude',
+                $config->latitudeMin(),
+                $config->latitudeMax(),
+                $this->latitude,
+            ));
+        }
+    }
+
+    private function validateLongitude(CoordinatesConfigInterface $config): void
+    {
+        if ($this->longitude->lessThan($config->longitudeMin())->getValue()
+            || $this->longitude->greaterThan($config->longitudeMax())->getValue()) {
+            throw new InvalidArgumentException($this->outOfBounds(
+                'Longitude',
+                $config->longitudeMin(),
+                $config->longitudeMax(),
+                $this->longitude,
+            ));
+        }
+    }
+
+    private function outOfBounds(
+        string $name,
+        FloatVO $min,
+        FloatVO $max,
+        FloatVO $value,
+    ): string {
+        return StringVO::from('{name} must be between {min} and {max}, got {value}')
+            ->format([
+                'name' => $name,
+                'min' => $min->format(1)->getValue(),
+                'max' => $max->format(1)->getValue(),
+                'value' => $value->format(6)->getValue(),
+            ])
+            ->getValue();
     }
 }

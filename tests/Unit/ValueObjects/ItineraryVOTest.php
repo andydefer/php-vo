@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace AndyDefer\PhpVo\Tests\Unit\ValueObjects;
 
-use AndyDefer\DomainStructures\Utils\Associative as StrictAssociative;
+use AndyDefer\DomainStructures\Utils\Associative;
 use AndyDefer\PhpVo\Collections\CoordinatesVOCollection;
 use AndyDefer\PhpVo\Collections\ItineraryLegVOCollection;
 use AndyDefer\PhpVo\Enums\DistanceUnit;
@@ -968,7 +968,7 @@ final class ItineraryVOTest extends TestCase
             $this->london(),
         );
 
-        $this->assertInstanceOf(StrictAssociative::class, $itinerary->getValue());
+        $this->assertInstanceOf(Associative::class, $itinerary->getValue());
     }
 
     public function test_get_value_exposes_input_structure(): void
@@ -1152,5 +1152,62 @@ final class ItineraryVOTest extends TestCase
         $this->assertFalse(ItineraryAlgorithm::HELD_KARP->supports(16));
         $this->assertFalse(ItineraryAlgorithm::GREEDY->supports(31));
         $this->assertFalse(ItineraryAlgorithm::TWO_OPT->supports(31));
+    }
+
+    // ========== CONSISTENCY VALIDATION ==========
+
+    public function test_constructor_rejects_start_equal_to_end(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Itinerary start and end points must be different.');
+
+        new ItineraryVO($this->paris(), $this->emptyIntermediates(), $this->paris());
+    }
+
+    public function test_constructor_rejects_intermediate_equal_to_start(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Intermediate point at index 1 cannot be equal to the start point.');
+
+        new ItineraryVO(
+            $this->paris(),
+            $this->intermediates($this->lille(), $this->paris()),
+            $this->london(),
+        );
+    }
+
+    public function test_constructor_rejects_intermediate_equal_to_end(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Intermediate point at index 0 cannot be equal to the end point.');
+
+        new ItineraryVO(
+            $this->paris(),
+            $this->intermediates($this->london(), $this->lille()),
+            $this->london(),
+        );
+    }
+
+    public function test_constructor_rejects_duplicate_intermediates(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Duplicate intermediate point at index 2 (already seen at index 0).');
+
+        new ItineraryVO(
+            $this->paris(),
+            $this->intermediates($this->lille(), $this->reims(), $this->lille()),
+            $this->london(),
+        );
+    }
+
+    public function test_constructor_accepts_distinct_points(): void
+    {
+        $itinerary = new ItineraryVO(
+            $this->paris(),
+            $this->intermediates($this->lille(), $this->reims(), $this->leHavre()),
+            $this->london(),
+        );
+
+        $this->assertSame(3, $itinerary->getIntermediates()->count());
     }
 }

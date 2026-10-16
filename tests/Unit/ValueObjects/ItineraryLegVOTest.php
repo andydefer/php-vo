@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace AndyDefer\PhpVo\Tests\Unit\ValueObjects;
 
-use AndyDefer\DomainStructures\Utils\StrictAssociative;
+use AndyDefer\DomainStructures\Utils\Associative;
 use AndyDefer\PhpVo\Enums\DistanceUnit;
 use AndyDefer\PhpVo\ValueObjects\CoordinatesVO;
 use AndyDefer\PhpVo\ValueObjects\ItineraryLegVO;
@@ -124,7 +124,7 @@ final class ItineraryLegVOTest extends TestCase
 
         $value = $leg->getValue();
 
-        $this->assertInstanceOf(StrictAssociative::class, $value);
+        $this->assertInstanceOf(Associative::class, $value);
         $this->assertSame(0, $value->index);
         $this->assertInstanceOf(CoordinatesVO::class, $value->from);
         $this->assertInstanceOf(CoordinatesVO::class, $value->to);

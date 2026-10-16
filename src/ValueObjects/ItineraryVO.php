@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace AndyDefer\PhpVo\ValueObjects;
 
 use AndyDefer\DomainStructures\Abstracts\AbstractValueObject;
-use AndyDefer\DomainStructures\Utils\Associative as StrictAssociative;
+use AndyDefer\DomainStructures\Utils\Associative;
 use AndyDefer\PhpVo\Collections\CoordinatesVOCollection;
 use AndyDefer\PhpVo\Collections\ItineraryLegVOCollection;
 use AndyDefer\PhpVo\Enums\DistanceUnit;
@@ -29,10 +29,14 @@ use InvalidArgumentException;
  * Each algorithm refuses to run above its practical limit; an
  * InvalidArgumentException is thrown to prevent hanging or memory exhaustion.
  *
+ * Consistency rules:
+ *   - The start point must differ from the end point.
+ *   - No intermediate may be equal to the start.
+ *   - No intermediate may be equal to the end.
+ *   - No two intermediates may be equal.
+ *
  * All distances are computed with the Haversine formula; no external service
  * (LocationIQ, Google Maps, ...) is involved.
- *
- * The number of intermediate points is limited to {@see self::MAX_INTERMEDIATES}.
  */
 final class ItineraryVO extends AbstractValueObject
 {
@@ -68,7 +72,73 @@ final class ItineraryVO extends AbstractValueObject
                 $count,
             ));
         }
+
+        $this->validateConsistency();
     }
+
+    // ============================================================
+    // CONSISTENCY VALIDATION
+    // ============================================================
+
+    /**
+     * Validate that start, end, and intermediates are consistent.
+     *
+     * @throws InvalidArgumentException
+     */
+    private function validateConsistency(): void
+    {
+        if ($this->start->equals($this->end)) {
+            throw new InvalidArgumentException(
+                'Itinerary start and end points must be different.',
+            );
+        }
+
+        $seen = [];
+
+        foreach ($this->intermediates as $index => $point) {
+            if ($point->equals($this->start)) {
+                throw new InvalidArgumentException(sprintf(
+                    'Intermediate point at index %d cannot be equal to the start point.',
+                    $index,
+                ));
+            }
+
+            if ($point->equals($this->end)) {
+                throw new InvalidArgumentException(sprintf(
+                    'Intermediate point at index %d cannot be equal to the end point.',
+                    $index,
+                ));
+            }
+
+            $key = $this->coordinateKey($point);
+
+            if (isset($seen[$key])) {
+                throw new InvalidArgumentException(sprintf(
+                    'Duplicate intermediate point at index %d (already seen at index %d).',
+                    $index,
+                    $seen[$key],
+                ));
+            }
+
+            $seen[$key] = $index;
+        }
+    }
+
+    /**
+     * Deterministic key for a coordinates pair, used for duplicate detection.
+     */
+    private function coordinateKey(CoordinatesVO $coordinates): string
+    {
+        return sprintf(
+            '%.10F|%.10F',
+            $coordinates->getLatitude()->getValue(),
+            $coordinates->getLongitude()->getValue(),
+        );
+    }
+
+    // ============================================================
+    // API (unchanged)
+    // ============================================================
 
     public function withUnit(DistanceUnit $unit): self
     {
@@ -81,12 +151,6 @@ final class ItineraryVO extends AbstractValueObject
         );
     }
 
-    /**
-     * Return a new itinerary using the specified algorithm.
-     *
-     * @throws InvalidArgumentException If the current intermediate count exceeds
-     *                                  the target algorithm's practical limit.
-     */
     public function withAlgorithm(ItineraryAlgorithm $algorithm): self
     {
         return new self(
@@ -98,9 +162,6 @@ final class ItineraryVO extends AbstractValueObject
         );
     }
 
-    /**
-     * Return a new itinerary using the algorithm recommended for its size.
-     */
     public function withBestAlgorithm(): self
     {
         return $this->withAlgorithm(
@@ -133,9 +194,6 @@ final class ItineraryVO extends AbstractValueObject
         return $this->algorithm;
     }
 
-    /**
-     * The ordered path (start → intermediates in optimal order → end).
-     */
     public function getOrderedPath(): CoordinatesVOCollection
     {
         $remaining = [];
@@ -164,9 +222,6 @@ final class ItineraryVO extends AbstractValueObject
         return $path;
     }
 
-    /**
-     * All legs (segments) of the ordered itinerary.
-     */
     public function legs(): ItineraryLegVOCollection
     {
         $path = $this->getOrderedPath();
@@ -261,33 +316,19 @@ final class ItineraryVO extends AbstractValueObject
         );
     }
 
-    /**
-     * The distance between two arbitrary coordinates, in this itinerary's unit.
-     */
     public function distanceBetween(CoordinatesVO $from, CoordinatesVO $to): float
     {
         $centralAngle = $this->centralAngle($from, $to);
 
-        // Earth radius is defined in kilometres; convert it to the itinerary's unit.
         $radiusInTargetUnit = self::EARTH_RADIUS_KM
             * (DistanceUnit::KILOMETRE->toMetres() / $this->unit->toMetres());
 
         return round($centralAngle * $radiusInTargetUnit, 2);
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * Returns the strict input structure of the itinerary:
-     *   - `start`          → CoordinatesVO
-     *   - `intermediates`  → CoordinatesVOCollection
-     *   - `end`            → CoordinatesVO
-     *   - `unit`           → DistanceUnit
-     *   - `algorithm`      → ItineraryAlgorithm
-     */
-    public function getValue(): StrictAssociative
+    public function getValue(): Associative
     {
-        return StrictAssociative::from([
+        return Associative::from([
             'start' => $this->start,
             'intermediates' => $this->intermediates,
             'end' => $this->end,
@@ -296,9 +337,6 @@ final class ItineraryVO extends AbstractValueObject
         ]);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function equals(AbstractValueObject $other): bool
     {
         if (! $other instanceof self) {
@@ -338,12 +376,10 @@ final class ItineraryVO extends AbstractValueObject
     }
 
     // ============================================================
-    // ALGORITHMS
+    // ALGORITHMS (unchanged)
     // ============================================================
 
     /**
-     * Order intermediates using a greedy nearest-neighbor heuristic.
-     *
      * @param  array<int, CoordinatesVO>  $intermediates
      * @return array<int, CoordinatesVO>
      */
@@ -370,8 +406,6 @@ final class ItineraryVO extends AbstractValueObject
     }
 
     /**
-     * Order intermediates by exhaustive permutation search.
-     *
      * @param  array<int, CoordinatesVO>  $intermediates
      * @return array<int, CoordinatesVO>
      */
@@ -405,10 +439,6 @@ final class ItineraryVO extends AbstractValueObject
     }
 
     /**
-     * Order intermediates using the Held-Karp dynamic programming algorithm.
-     *
-     * Computes the exact optimal path for n ≤ 15 in O(n² · 2ⁿ).
-     *
      * @param  array<int, CoordinatesVO>  $intermediates
      * @return array<int, CoordinatesVO>
      */
@@ -509,8 +539,6 @@ final class ItineraryVO extends AbstractValueObject
     }
 
     /**
-     * Improve a path using the 2-opt local search.
-     *
      * @param  array<int, CoordinatesVO>  $path
      * @return array<int, CoordinatesVO>
      */
@@ -544,12 +572,10 @@ final class ItineraryVO extends AbstractValueObject
     }
 
     // ============================================================
-    // ALGORITHM HELPERS
+    // HELPERS (unchanged)
     // ============================================================
 
     /**
-     * Compute the total cost of an ordered path (start → path → end).
-     *
      * @param  array<int, CoordinatesVO>  $path
      */
     private function pathCost(array $path): float
@@ -572,8 +598,6 @@ final class ItineraryVO extends AbstractValueObject
     }
 
     /**
-     * Cost of the edges affected by a 2-opt move between indices $i and $j.
-     *
      * @param  array<int, CoordinatesVO>  $path
      */
     private function pathCostBetween(array $path, int $i, int $j): float
@@ -586,8 +610,6 @@ final class ItineraryVO extends AbstractValueObject
     }
 
     /**
-     * Cost of the same edges after reversing the segment [$i, $j].
-     *
      * @param  array<int, CoordinatesVO>  $path
      */
     private function swappedCostBetween(array $path, int $i, int $j): float
@@ -600,8 +622,6 @@ final class ItineraryVO extends AbstractValueObject
     }
 
     /**
-     * Return a new path with the segment between indices $i and $j reversed.
-     *
      * @param  array<int, CoordinatesVO>  $path
      * @return array<int, CoordinatesVO>
      */
@@ -618,8 +638,6 @@ final class ItineraryVO extends AbstractValueObject
     }
 
     /**
-     * Generate all permutations of a given list of integers.
-     *
      * @param  array<int, int>  $items
      * @return \Generator<int, array<int, int>>
      */
@@ -642,8 +660,6 @@ final class ItineraryVO extends AbstractValueObject
     }
 
     /**
-     * Find the index of the nearest point from a reference within candidates.
-     *
      * @param  array<int, CoordinatesVO>  $candidates
      */
     private function findNearestIndex(CoordinatesVO $reference, array $candidates): int
@@ -663,9 +679,6 @@ final class ItineraryVO extends AbstractValueObject
         return $nearestIndex;
     }
 
-    /**
-     * Haversine central angle between two coordinates.
-     */
     private function centralAngle(CoordinatesVO $from, CoordinatesVO $to): float
     {
         $latFrom = $from->getLatitude()->getValue() * self::DEGREES_TO_RADIANS;
