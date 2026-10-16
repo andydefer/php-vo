@@ -6,6 +6,7 @@ namespace AndyDefer\PhpVo\ValueObjects;
 
 use AndyDefer\DomainStructures\Abstracts\AbstractValueObject;
 use AndyDefer\DomainStructures\Collections\Utility\FloatTypedCollection;
+use AndyDefer\DomainStructures\Utils\Associative;
 use AndyDefer\PhpVo\ValueObjects\Abstracts\AbstractCoordinatesVO;
 use AndyDefer\PhpVo\ValueObjects\Strings\UuidVO;
 use AndyDefer\PhpVo\ValueObjects\Types\FloatVO;
@@ -66,7 +67,7 @@ final class LocationVO extends AbstractCoordinatesVO
     }
 
     /**
-     * Longitude (first element) as a raw float (public API unchanged).
+     * Longitude (first element) as a raw float.
      */
     public function getLongitude(): float
     {
@@ -74,7 +75,7 @@ final class LocationVO extends AbstractCoordinatesVO
     }
 
     /**
-     * Latitude (second element) as a raw float (public API unchanged).
+     * Latitude (second element) as a raw float.
      */
     public function getLatitude(): float
     {
@@ -96,9 +97,21 @@ final class LocationVO extends AbstractCoordinatesVO
         return $this->coordinates->count();
     }
 
-    public function getValue(): FloatTypedCollection
+    /**
+     * Returns the exact same structure as the constructor input:
+     *   - coordinates → FloatTypedCollection
+     *   - uuid        → ?UuidVO
+     *   - name        → ?StringVO
+     *   - description → ?StringVO
+     */
+    public function getValue(): Associative
     {
-        return $this->coordinates;
+        return Associative::from([
+            'coordinates' => $this->coordinates,
+            'uuid' => $this->uuid,
+            'name' => $this->name,
+            'description' => $this->description,
+        ]);
     }
 
     /**
@@ -191,10 +204,34 @@ final class LocationVO extends AbstractCoordinatesVO
     }
 
     /**
-     * LocationIQ order: `longitude,latitude` with 6 decimals (unchanged).
+     * LocationIQ order: `longitude,latitude` with 6 decimals.
      */
     public function __toString(): string
     {
         return sprintf('%F,%F', $this->longitudeValue(), $this->latitudeValue());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function resolveUuid(): ?UuidVO
+    {
+        return $this->uuid;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function resolveName(): ?StringVO
+    {
+        return $this->name;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function resolveDescription(): ?StringVO
+    {
+        return $this->description;
     }
 }

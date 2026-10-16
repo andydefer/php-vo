@@ -5,8 +5,11 @@ declare(strict_types=1);
 namespace AndyDefer\PhpVo\Tests\Unit\ValueObjects;
 
 use AndyDefer\DomainStructures\Collections\Utility\FloatTypedCollection;
+use AndyDefer\DomainStructures\Utils\Associative;
 use AndyDefer\PhpVo\ValueObjects\CoordinatesVO;
 use AndyDefer\PhpVo\ValueObjects\LocationVO;
+use AndyDefer\PhpVo\ValueObjects\Strings\UuidVO;
+use AndyDefer\PhpVo\ValueObjects\Types\StringVO;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
@@ -119,14 +122,37 @@ final class LocationVOTest extends TestCase
         $this->assertSame(2, $location->getCoordinateCount());
     }
 
-    public function test_get_value_returns_float_typed_collection(): void
+    public function test_get_value_returns_associative_with_input_structure(): void
     {
         $location = LocationVO::fromArray(self::PARIS_COORDINATES);
 
-        $collection = $location->getValue();
+        $value = $location->getValue();
 
-        $this->assertInstanceOf(FloatTypedCollection::class, $collection);
-        $this->assertSame([2.3522, 48.8566], $collection->toArray());
+        $this->assertInstanceOf(Associative::class, $value);
+        $this->assertInstanceOf(FloatTypedCollection::class, $value->coordinates);
+        $this->assertSame([2.3522, 48.8566], $value->coordinates->toArray());
+        $this->assertNull($value->uuid);
+        $this->assertNull($value->name);
+        $this->assertNull($value->description);
+    }
+
+    public function test_get_value_preserves_labels(): void
+    {
+        $location = LocationVO::fromArray(
+            self::PARIS_COORDINATES,
+            UuidVO::generate(),
+            StringVO::from('Siège Paris'),
+            StringVO::from('Bureaux principaux'),
+        );
+
+        $value = $location->getValue();
+
+        $this->assertInstanceOf(Associative::class, $value);
+        $this->assertSame([2.3522, 48.8566], $value->coordinates->toArray());
+        $this->assertInstanceOf(UuidVO::class, $value->uuid);
+        $this->assertInstanceOf(StringVO::class, $value->name);
+        $this->assertSame('Siège Paris', $value->name->getValue());
+        $this->assertSame('Bureaux principaux', $value->description->getValue());
     }
 
     // ========== TESTS DE CONVERSION ==========
